@@ -1,7 +1,4 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const Store = require('electron-store');
-
-const store = new Store();
 
 // All the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
@@ -17,11 +14,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 contextBridge.exposeInMainWorld('electron', {
-    setSettings: settings => {
-        store.set('settings', settings);
-        console.log(store.get('unicorn'));
-    },
-    getSettings: () => {
-      ipcRenderer.send(store.get('settings'));
+    settings: {
+        get() {
+            return ipcRenderer.sendSync('electron-get-settings');
+        },
+        set(settings) {
+            ipcRenderer.send('electron-set-settings', settings);
+        },
     },
 });
