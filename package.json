@@ -1,9 +1,9 @@
 {
-  "name": "electron-vite-react",
+  "name": "zman-clock-electron",
   "version": "2.2.0",
   "main": "dist-electron/main/index.js",
-  "description": "Electron Vite React boilerplate.",
-  "author": "草鞋没号 <308487730@qq.com>",
+  "description": "Zman Clock - Cross Platform",
+  "author": "CB Sommers <cb@compute.co.il>",
   "license": "MIT",
   "private": true,
   "debug": {
