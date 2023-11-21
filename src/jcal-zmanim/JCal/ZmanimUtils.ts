@@ -1,22 +1,22 @@
-import {Utils, DaysOfWeek} from '../Utils.js';
-import Zmanim from './Zmanim.js';
-import Location from './Location.js';
-import jDate from './jDate.js';
-import { ZmanTypes, ZmanTypeIds, getZmanType } from '../ZmanTypes.js';
-import { SunTimes, Time, ZmanToShow } from '../jcal-zmanim.js';
+import { Utils, DaysOfWeek } from '../Utils';
+import Zmanim from './Zmanim';
+import Location from './Location';
+import jDate from './jDate';
+import { ZmanTypes, ZmanTypeIds, getZmanType } from '../ZmanTypes';
+import { SunTimes, Time, ZmanToShow } from '../jcal-zmanim';
 
 type ZmanTime = {
-    date: Date,
-    location: Location,
-    sunrise: Time | undefined,
-    sunset: Time | undefined,
-    suntimesMishor: SunTimes | undefined,
-    sunriseMishor: Time | undefined,
-    sunsetMishor: Time | undefined,
-    mishorNeg90: Time | undefined,
-    chatzos: Time | undefined,
-    shaaZmanis: number | undefined,
-    shaaZmanisMga: number | undefined,
+    date: Date;
+    location: Location;
+    sunrise: Time | undefined;
+    sunset: Time | undefined;
+    suntimesMishor: SunTimes | undefined;
+    sunriseMishor: Time | undefined;
+    sunsetMishor: Time | undefined;
+    mishorNeg90: Time | undefined;
+    chatzos: Time | undefined;
+    shaaZmanis: number | undefined;
+    shaaZmanisMga: number | undefined;
 };
 export const WhichDaysFlags = Object.freeze({
     SUNDAY: 1,
@@ -30,7 +30,7 @@ export const WhichDaysFlags = Object.freeze({
 });
 
 export default class ZmanimUtils {
-    static zmanTimesCache: ZmanTime[] = [];   
+    static zmanTimesCache: ZmanTime[] = [];
 
     /**
      * Gets the zmanim for all the types in the given list.
@@ -40,13 +40,16 @@ export default class ZmanimUtils {
      * @param {Location} location The location for which to get the zmanim
      * @returns{[{zmanType:{id:number,offset:?number,desc:string,eng:string,heb:string },time:Time}]}
      */
-    static getZmanTimes(zmanTypes: ZmanToShow[], date: Date, jdate: jDate, location: Location): { zmanType: ZmanToShow, time?: Time }[] {
+    static getZmanTimes(
+        zmanTypes: ZmanToShow[],
+        date: Date,
+        jdate: jDate,
+        location: Location
+    ): { zmanType: ZmanToShow; time?: Time }[] {
         const mem = ZmanimUtils.zmanTimesCache.find(
-            (z) =>
-                Utils.isSameSdate(z.date, date) &&
-                z.location.Name === location.Name,
-        ),
-            zmanTimes: { zmanType: ZmanToShow, time?: Time }[] = [],
+                z => Utils.isSameSdate(z.date, date) && z.location.Name === location.Name
+            ),
+            zmanTimes: { zmanType: ZmanToShow; time?: Time }[] = [],
             whichDay = ZmanimUtils.getWhichDays(date, jdate, location);
         let sunrise: Time | undefined,
             sunset: Time | undefined,
@@ -76,17 +79,11 @@ export default class ZmanimUtils {
             sunsetMishor = suntimesMishor.sunset;
             mishorNeg90 = Utils.addMinutes(sunriseMishor, -90);
             chatzos =
-                sunriseMishor &&
-                sunsetMishor &&
-                Zmanim.getChatzosFromSuntimes(suntimesMishor);
+                sunriseMishor && sunsetMishor && Zmanim.getChatzosFromSuntimes(suntimesMishor);
             shaaZmanis =
-                sunriseMishor &&
-                sunsetMishor &&
-                Zmanim.getShaaZmanisFromSunTimes(suntimesMishor);
+                sunriseMishor && sunsetMishor && Zmanim.getShaaZmanisFromSunTimes(suntimesMishor);
             shaaZmanisMga =
-                sunriseMishor &&
-                sunsetMishor &&
-                Zmanim.getShaaZmanisMga(suntimesMishor, true);
+                sunriseMishor && sunsetMishor && Zmanim.getShaaZmanisMga(suntimesMishor, true);
 
             ZmanimUtils.zmanTimesCache.push({
                 date,
@@ -103,10 +100,10 @@ export default class ZmanimUtils {
             });
         }
         for (let zmanType of zmanTypes) {
-            const offset = zmanType.offset &&
-                (!zmanType.whichDaysFlags || zmanType.whichDaysFlags & whichDay)
-                ? zmanType.offset
-                : 0;
+            const offset =
+                zmanType.offset && (!zmanType.whichDaysFlags || zmanType.whichDaysFlags & whichDay)
+                    ? zmanType.offset
+                    : 0;
             switch (zmanType.id) {
                 case ZmanTypeIds.ChatzosLayla: // chatzosNight
                     zmanTimes.push({
@@ -117,9 +114,7 @@ export default class ZmanimUtils {
                 case ZmanTypeIds.Alos90: // alos90
                     zmanTimes.push({
                         zmanType,
-                        time: offset
-                            ? Utils.addMinutes(mishorNeg90, offset)
-                            : mishorNeg90,
+                        time: offset ? Utils.addMinutes(mishorNeg90, offset) : mishorNeg90,
                     });
                     break;
                 case ZmanTypeIds.Alos72: // alos72
@@ -137,17 +132,13 @@ export default class ZmanimUtils {
                 case ZmanTypeIds.NetzAtElevation: //netzElevation
                     zmanTimes.push({
                         zmanType,
-                        time: offset
-                            ? Utils.addMinutes(sunrise, offset)
-                            : sunrise,
+                        time: offset ? Utils.addMinutes(sunrise, offset) : sunrise,
                     });
                     break;
                 case ZmanTypeIds.NetzMishor: // netzMishor:
                     zmanTimes.push({
                         zmanType,
-                        time: offset
-                            ? Utils.addMinutes(sunriseMishor, offset)
-                            : sunriseMishor,
+                        time: offset ? Utils.addMinutes(sunriseMishor, offset) : sunriseMishor,
                     });
                     break;
                 case ZmanTypeIds.szksMga: //szksMga
@@ -156,7 +147,7 @@ export default class ZmanimUtils {
                             zmanType,
                             time: Utils.addMinutes(
                                 mishorNeg90,
-                                Math.floor(shaaZmanisMga * 3) + offset,
+                                Math.floor(shaaZmanisMga * 3) + offset
                             ),
                         });
                     break;
@@ -166,7 +157,7 @@ export default class ZmanimUtils {
                             zmanType,
                             time: Utils.addMinutes(
                                 sunriseMishor,
-                                Math.floor(shaaZmanis * 3) + offset,
+                                Math.floor(shaaZmanis * 3) + offset
                             ),
                         });
                     break;
@@ -176,7 +167,7 @@ export default class ZmanimUtils {
                             zmanType,
                             time: Utils.addMinutes(
                                 mishorNeg90,
-                                Math.floor(shaaZmanisMga * 4) + offset,
+                                Math.floor(shaaZmanisMga * 4) + offset
                             ),
                         });
                     break;
@@ -186,62 +177,47 @@ export default class ZmanimUtils {
                             zmanType,
                             time: Utils.addMinutes(
                                 sunriseMishor,
-                                Math.floor(shaaZmanis * 4) + offset,
+                                Math.floor(shaaZmanis * 4) + offset
                             ),
                         });
                     break;
                 case ZmanTypeIds.chatzosDay: //chatzos
                     zmanTimes.push({
                         zmanType,
-                        time: offset
-                            ? Utils.addMinutes(chatzos, offset)
-                            : chatzos,
+                        time: offset ? Utils.addMinutes(chatzos, offset) : chatzos,
                     });
                     break;
                 case ZmanTypeIds.minGed: //minGed
                     if (shaaZmanis)
                         zmanTimes.push({
                             zmanType,
-                            time: Utils.addMinutes(
-                                chatzos,
-                                shaaZmanis * 0.5 + offset,
-                            ),
+                            time: Utils.addMinutes(chatzos, shaaZmanis * 0.5 + offset),
                         });
                     break;
                 case ZmanTypeIds.minKet: //minKet
                     if (shaaZmanis)
                         zmanTimes.push({
                             zmanType,
-                            time: Utils.addMinutes(
-                                sunriseMishor,
-                                shaaZmanis * 9.5 + offset,
-                            ),
+                            time: Utils.addMinutes(sunriseMishor, shaaZmanis * 9.5 + offset),
                         });
                     break;
                 case ZmanTypeIds.plag: //plag
                     if (shaaZmanis)
                         zmanTimes.push({
                             zmanType,
-                            time: Utils.addMinutes(
-                                sunriseMishor,
-                                shaaZmanis * 10.75 + offset,
-                            ),
+                            time: Utils.addMinutes(sunriseMishor, shaaZmanis * 10.75 + offset),
                         });
                     break;
                 case ZmanTypeIds.shkiaAtSeaLevel: //shkiaMishor
                     zmanTimes.push({
                         zmanType,
-                        time: offset
-                            ? Utils.addMinutes(sunsetMishor, offset)
-                            : sunsetMishor,
+                        time: offset ? Utils.addMinutes(sunsetMishor, offset) : sunsetMishor,
                     });
                     break;
                 case ZmanTypeIds.shkiaElevation: //shkiaElevation
                     zmanTimes.push({
                         zmanType,
-                        time: offset
-                            ? Utils.addMinutes(sunset, offset)
-                            : sunset,
+                        time: offset ? Utils.addMinutes(sunset, offset) : sunset,
                     });
                     break;
                 case ZmanTypeIds.tzais45: // tzais45
@@ -266,20 +242,14 @@ export default class ZmanimUtils {
                     if (shaaZmanis)
                         zmanTimes.push({
                             zmanType,
-                            time: Utils.addMinutes(
-                                sunset,
-                                shaaZmanis * 1.2 + offset,
-                            ),
+                            time: Utils.addMinutes(sunset, shaaZmanis * 1.2 + offset),
                         });
                     break;
                 case ZmanTypeIds.rabbeinuTamZmaniosMga: //tzais72ZmaniotMA
                     if (shaaZmanisMga)
                         zmanTimes.push({
                             zmanType,
-                            time: Utils.addMinutes(
-                                sunset,
-                                shaaZmanisMga * 1.2 + offset,
-                            ),
+                            time: Utils.addMinutes(sunset, shaaZmanisMga * 1.2 + offset),
                         });
                     break;
                 case ZmanTypeIds.candleLighting: //candleLighting
@@ -287,42 +257,36 @@ export default class ZmanimUtils {
                         zmanTimes.push({
                             zmanType,
                             time: Utils.addMinutes(
-                                Zmanim.getCandleLightingFromSunset(
-                                    sunset,
-                                    location,
-                                ),
-                                offset,
+                                Zmanim.getCandleLightingFromSunset(sunset, location),
+                                offset
                             ),
                         });
                     }
                     break;
                 case ZmanTypeIds.SofZmanEatingChometz: //Sof Zman Achilas Chometz
-                    if (shaaZmanisMga && jdate.Month === 1 &&
-                        jdate.Day === 14 &&
-                        Utils.isTimeAfter(sunrise, Utils.timeFromDate(date))) {
-                        zmanTimes.push({
-                            zmanType,
-                            time: Utils.addMinutes(
-                                sunrise,
-                                -90 + offset + shaaZmanisMga * 4,
-                            ),
-                        });
-                    }
-                    break;
-                case ZmanTypeIds.SofZmanBurnChometz: //Sof Zman Biur Chometz
-                    if (shaaZmanisMga &&
+                    if (
+                        shaaZmanisMga &&
                         jdate.Month === 1 &&
-                        (jdate.Day === 14 ||
-                            (jdate.DayOfWeek === DaysOfWeek.FRIDAY &&
-                                jdate.Day === 13)) &&
+                        jdate.Day === 14 &&
                         Utils.isTimeAfter(sunrise, Utils.timeFromDate(date))
                     ) {
                         zmanTimes.push({
                             zmanType,
-                            time: Utils.addMinutes(
-                                sunrise,
-                                -90 + offset + shaaZmanisMga * 5,
-                            ),
+                            time: Utils.addMinutes(sunrise, -90 + offset + shaaZmanisMga * 4),
+                        });
+                    }
+                    break;
+                case ZmanTypeIds.SofZmanBurnChometz: //Sof Zman Biur Chometz
+                    if (
+                        shaaZmanisMga &&
+                        jdate.Month === 1 &&
+                        (jdate.Day === 14 ||
+                            (jdate.DayOfWeek === DaysOfWeek.FRIDAY && jdate.Day === 13)) &&
+                        Utils.isTimeAfter(sunrise, Utils.timeFromDate(date))
+                    ) {
+                        zmanTimes.push({
+                            zmanType,
+                            time: Utils.addMinutes(sunrise, -90 + offset + shaaZmanisMga * 5),
                         });
                     }
                     break;
@@ -330,6 +294,72 @@ export default class ZmanimUtils {
         }
         return zmanTimes;
     }
+
+    /**
+     * Returns the date corrected time of the given zmanim on the given date at the given location
+     * If the zman is after or within 30 minutes of the given time, this days zman is returned, otherwise tomorrows zman is returned.
+     */
+    static getCorrectZmanTimes(
+        date: Date | jDate,
+        time: Time,
+        location: Location,
+        zmanimTypes: ZmanToShow[],
+        minToShowPassedZman: number,
+        sunset: Time
+    ) {
+        const correctedTimes = [],
+            { sdate, jdate } = Utils.bothDates(date),
+            tomorrowJd = jdate.addDays(1),
+            tomorrowSd = Utils.addDaysToSdate(sdate, 1),
+            /*  Candle lighting and chometz times are not shown after sunset.
+                This solves the issue of Candle lighting showing as having "passed 20 minutes ago"
+                Thursday evening after sunset - which shows as hasCandleLighting = true
+                as it is already Friday... */
+            zmanTimes = ZmanimUtils.getZmanTimes(
+                zmanimTypes.filter(
+                    zt =>
+                        !(
+                            zt.id === ZmanTypeIds.candleLighting ||
+                            zt.id === ZmanTypeIds.SofZmanEatingChometz ||
+                            zt.id === ZmanTypeIds.SofZmanBurnChometz
+                        ) || Utils.isTimeAfter(time, sunset)
+                ),
+                sdate,
+                jdate,
+                location
+            ),
+            tomorrowTimes = ZmanimUtils.getZmanTimes(
+                //Candle lighting tomorrow is never shown...
+                zmanimTypes.filter(zt => zt.id !== ZmanTypeIds.candleLighting),
+                tomorrowSd,
+                tomorrowJd,
+                location
+            );
+
+        for (let zt of zmanTimes) {
+            let oTime = zt.time as Time,
+                isTomorrow = false,
+                diff = Utils.timeDiff(time, oTime, true);
+            if (diff.sign < 1 && Utils.totalMinutes(diff) >= minToShowPassedZman) {
+                const tom = tomorrowTimes.find(t => t.zmanType === zt.zmanType);
+                if (tom && tom.time) {
+                    oTime = tom.time;
+                    isTomorrow = true;
+                }
+            }
+            correctedTimes.push({
+                zmanType: zt.zmanType,
+                time: oTime,
+                isTomorrow,
+            });
+        }
+        return correctedTimes.sort(
+            (a, b) =>
+                (a.isTomorrow ? 1 : -1) - (b.isTomorrow ? 1 : -1) ||
+                Utils.totalSeconds(a.time) - Utils.totalSeconds(b.time)
+        );
+    }
+
     /**
      * Get the WhichDaysFlags for the given secular date
      * @param {Date} date
@@ -376,7 +406,7 @@ export default class ZmanimUtils {
             ],
             sdate,
             jdate,
-            location,
+            location
         );
         return {
             chatzosHayom: zmanim[0].time,
@@ -387,13 +417,13 @@ export default class ZmanimUtils {
     }
 
     /**
-    * Returns all the zmanim for the given day    
-    * @param {Date|jDate} date
-    * @param {Location} location
-    * @returns {{zmanType:ZmanToShow, time?:Time }[]}
-    */
+     * Returns all the zmanim for the given day
+     * @param {Date|jDate} date
+     * @param {Location} location
+     * @returns {{zmanType:ZmanToShow, time?:Time }[]}
+     */
     static getAllZmanim(date: jDate | Date, location: Location) {
         const { sdate, jdate } = Utils.bothDates(date);
-        return ZmanimUtils.getZmanTimes(ZmanTypes, sdate, jdate, location,);
+        return ZmanimUtils.getZmanTimes(ZmanTypes, sdate, jdate, location);
     }
 }
