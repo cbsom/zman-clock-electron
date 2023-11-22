@@ -1,18 +1,10 @@
-import { useState, useEffect } from 'react';
-import UpdateElectron from '@/components/update';
-import { jDate, Utils, getNotifications, ZmanimUtils, Zmanim } from './jcal-zmanim';
-import { useSettingsData } from './settingsContext';
-import Settings from './settings';
-import './App.css';
-import { SunTimes, Time, ZmanToShow } from './jcal-zmanim/jcal-zmanim';
-
-type ZmanTime = {
-  zmanType: ZmanToShow;
-  time: Time;
-  isTomorrow: boolean;
-}
-
-type ShulZmanimType = { chatzosHayom: Time | null, chatzosHalayla: Time | null, alos: Time | null, shkia: Time | null };
+import { useState, useEffect } from "react";
+import { jDate, Utils, getNotifications, ZmanimUtils, Zmanim, findLocation } from "./jcal-zmanim";
+import { useSettingsData } from "./settingsContext";
+import Settings from "./settings";
+import "./App.css";
+import type { SunTimes, Time } from "./jcal-zmanim/jcal-zmanim";
+import type { ShulZmanimType, ZmanTime } from "./App";
 
 function App() {
   const initialSettings = new Settings();
@@ -59,22 +51,27 @@ function App() {
     return () => clearInterval(interval);
   });
 
+  useEffect(() => {
+    const jlm = findLocation("Jerusalem");
+    if (!!jlm) {
+      const ns = { ...settings, location: jlm };
+      setSettings(ns);
+    }
+  }, []);
+
   const refresh = () => {
     const sd = new Date(),
       nowTime = Utils.timeFromDate(sd);
 
     if (!needsZmanRefresh(sd, nowTime)) {
-      if (
-        Utils.isSameSdate(jdate.getDate(), sd) &&
-        Utils.isTimeAfter(sunTimes.sunset, nowTime)
-      ) {
+      if (Utils.isSameSdate(jdate.getDate(), sd) && Utils.isTimeAfter(sunTimes.sunset, nowTime)) {
         setJdate(jdate.addDays(1));
       }
       setSdate(sd);
       setCurrentTime(nowTime);
       setJdate(jdate);
     } else {
-      console.log('Refreshing all zmanim');
+      console.log("Refreshing all zmanim");
       const sunset = Zmanim.getSunTimes(sd, settings.location).sunset,
         jdate = Utils.isTimeAfter(sunset, nowTime)
           ? new jDate(Utils.addDaysToSdate(sd, 1))
@@ -91,10 +88,10 @@ function App() {
       setSdate(sd);
       setJdate(jdate);
       setCurrentTime(nowTime);
-      setShulZmanim(ZmanimUtils.getBasicShulZmanim(sd, settings.location) as ShulZmanimType)
+      setShulZmanim(ZmanimUtils.getBasicShulZmanim(sd, settings.location) as ShulZmanimType);
     }
     fillNotifications();
-  }
+  };
   const isPastShulZman = () => {
     const nowTime = currentTime,
       { chatzosHayom, chatzosHalayla, alos, shkia } = shulZmanim;
@@ -109,7 +106,7 @@ function App() {
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
         shulZmanim.chatzosHalayla = null;
       }
-      console.log('Refreshing notifications due to shkia.');
+      console.log("Refreshing notifications due to shkia.");
       return true;
     } else if (chatzosHayom && Utils.isTimeAfter(chatzosHayom, nowTime)) {
       //We only want to refresh the notifications one time
@@ -119,7 +116,7 @@ function App() {
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
         shulZmanim.chatzosHalayla = null;
       }
-      console.log('Refreshing notifications due to chatzos hayom.');
+      console.log("Refreshing notifications due to chatzos hayom.");
       return true;
     } else if (alos && Utils.isTimeAfter(alos, nowTime)) {
       //We only want to refresh the notifications one time
@@ -128,19 +125,16 @@ function App() {
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
         shulZmanim.chatzosHalayla = null;
       }
-      console.log('Refreshing notifications due to alos.');
+      console.log("Refreshing notifications due to alos.");
       return true;
-    } else if (
-      chatzosHalayla &&
-      Utils.isTimeAfter(chatzosHalayla, nowTime)
-    ) {
+    } else if (chatzosHalayla && Utils.isTimeAfter(chatzosHalayla, nowTime)) {
       //We only want to refresh the notifications one time
       shulZmanim.chatzosHalayla = null;
-      console.log('Refreshing notifications due to chatzosHalayla.');
+      console.log("Refreshing notifications due to chatzosHalayla.");
       return true;
     }
     return false;
-  }
+  };
   const fillNotifications = () => {
     if (settings.showNotifications) {
       if (needsNotificationsRefresh || isPastShulZman()) {
@@ -153,30 +147,26 @@ function App() {
         );
         setNeedsNotificationsRefresh(false);
         setNotifications(notifications);
-        console.log('Refreshing notifications: ', jdate, sdate, currentTime);
+        console.log("Refreshing notifications: ", jdate, sdate, currentTime);
       }
     } else if (
       notifications &&
-      (notifications.dayNotes.length ||
-        notifications.tefillahNotes.length)
+      (notifications.dayNotes.length || notifications.tefillahNotes.length)
     ) {
       //If setting is off, hide all notifications
       setNotifications(null);
     }
-  }
+  };
   const needsZmanRefresh = (sd: Date, nowTime: Time) => {
     if (
       !sdate ||
-      sd.getDate() !== sdate.getDate() || (
-        !!zmanTimes &&
+      sd.getDate() !== sdate.getDate() ||
+      (!!zmanTimes &&
         zmanTimes.some(
-          /**
-           * @param {{ isTomorrow: any; time: { hour: number; minute: number; second: number; }; }} zt
-           */
-          zt =>
+          (zt) =>
             !zt.isTomorrow &&
             Utils.totalMinutes(nowTime) - Utils.totalMinutes(zt.time) >=
-            settings.minToShowPassedZman
+              settings.minToShowPassedZman
         ))
     ) {
       return true;
@@ -186,19 +176,20 @@ function App() {
   };
 
   return (
-    <div className='App'>
+    <div className="App">
+      <h4>{settings.location.Name}</h4>
       {notifications?.dayNotes.map((n, index) => (
-        <div itemID={index.toString()}>{n}</div>
+        <div key={index.toString()}>{n}</div>
       ))}
       {notifications?.tefillahNotes.map((n, index) => (
-        <div itemID={index.toString()}>{n}</div>
+        <div key={index.toString()}>{n}</div>
       ))}
       <h2>{jdate.toStringHeb()}</h2>
       <h3>{Utils.toStringDate(sdate)}</h3>
       <h1>{Utils.getTimeString(currentTime)}</h1>
       {settings && settings.zmanimToShow
-        ? settings.zmanimToShow.map((zis, index) => <div></div>)
-        : null}    
+        ? settings.zmanimToShow.map((zis, index) => <div key={index}></div>)
+        : null}
     </div>
   );
 }

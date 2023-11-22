@@ -7,25 +7,26 @@ interface SettingsContextType {
 
 declare global {
     interface Window {
-        electron: { settings: { get: Function, set: Function } }
+        electron: { setSettings: Function }
     }
 }
 
-const SettingsContext = createContext<SettingsContextType>({ settings: (new Settings()), setSettings: ((s: Settings) =>{}) });
+const initialSettings = new Settings();
+const SettingsContext = createContext<SettingsContextType>({ settings: (initialSettings), setSettings: ((s: Settings) =>{}) });
 
 export const SettingsProvider = (props: PropsWithChildren) => {
     const [settings, setStateSettings] = useState<Settings>((new Settings()))
 
     useEffect(() => {
-        if (window.electron && window.electron.settings) {
-            setStateSettings(window.electron.settings.get());
+        if (window.electron && window.electron.setSettings) {
+            setStateSettings(window.electron.setSettings());            
         }
     }, [])
 
     const setSettings = async (s: Settings) => {
         setStateSettings(s);
-        if (window.electron && window.electron.settings) {
-            window.electron.settings.set(s);
+        if (window.electron && window.electron.setSettings) {
+            window.electron.setSettings(s);
         }
     }
 

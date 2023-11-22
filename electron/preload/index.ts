@@ -1,5 +1,41 @@
 import { contextBridge, ipcRenderer } from "electron"
 
+contextBridge.exposeInMainWorld('ipcRenderer', withPrototype(ipcRenderer))
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  sendMessageToMainProcess: (channel:string, payload:object) => ipcRenderer.invoke(channel, payload),
+})
+
+contextBridge.exposeInMainWorld('electron', withPrototype({
+  settings: {
+    get() {
+      return ipcRenderer.sendSync('electron-get-settings');
+    },
+    set(settings: any) {
+      ipcRenderer.send('electron-set-settings', settings);
+    },
+  },
+}));
+
+// `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually patching it.
+function withPrototype(obj: Record<string, any>) {
+  const protos = Object.getPrototypeOf(obj)
+
+  for (const [key, value] of Object.entries(protos)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) continue
+
+    if (typeof value === 'function') {
+      // Some native APIs, like `NodeJS.EventEmitter['on']`, don't work in the Renderer process. Wrapping them into a function.
+      obj[key] = function (...args: any) {
+        return value.call(obj, ...args)
+      }
+    } else {
+      obj[key] = value
+    }
+  }
+  return obj
+}
+
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise(resolve => {
     if (condition.includes(document.readyState)) {
@@ -94,15 +130,3 @@ window.onmessage = (ev) => {
 setTimeout(removeLoading, 4999)
 
 // ----------------------------------------------------------------------
-
-
-contextBridge.exposeInMainWorld('electron', {
-  settings: {
-    get() {
-      return ipcRenderer.sendSync('electron-get-settings');
-    },
-    set(settings: any) {
-      ipcRenderer.send('electron-set-settings', settings);
-    },
-  },
-});
