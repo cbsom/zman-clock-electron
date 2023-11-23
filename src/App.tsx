@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { jDate, Utils, getNotifications, ZmanimUtils, Zmanim, findLocation } from "./jcal-zmanim";
 import { useSettingsData } from "./settingsContext";
 import Settings from "./settings";
-import "./App.css";
+import { SingleZman } from "./components/SingleZman";
+import "./css/App.css";
 
-import type {SunTimes, Time,  ShulZmanimType, ZmanTime} from "./jcal-zmanim";
+import type { SunTimes, Time, ShulZmanimType, ZmanTime } from "./jcal-zmanim";
 
 function App() {
   const initialSettings = new Settings();
@@ -27,38 +28,36 @@ function App() {
   );
   const [zmanTimes, setZmanTimes] = useState<ZmanTime[]>();
   const [needsNotificationsRefresh, setNeedsNotificationsRefresh] = useState(true);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      const newDate = new Date();
-      const ctime = Utils.timeFromDate(newDate);
-
-      setSdate(newDate);
-      setCurrentTime(ctime);
-
-      //After shkia, but before midnight
-      if (
-        Utils.isTimeAfter(sunTimes.sunset, ctime) &&
-        Utils.isTimeAfter(ctime, { hour: 23, minute: 59, second: 59 })
-      ) {
-        //Set the Jewish date for tomorrow
-        const abs = jDate.absSd(sdate) + 1;
-        setJdate(new jDate(abs));
-      }
-      const notifs = getNotifications(jdate, ctime, settings.location, true);
-      setNotifications(notifs);
-    }, 1000);
-    return () => clearInterval(interval);
-  });
-
-  useEffect(() => {
+ 
+  //Run once
+  useEffect(() => {    
     const jlm = findLocation("Jerusalem");
     if (!!jlm) {
       const ns = { ...settings, location: jlm };
       setSettings(ns);
     }
+    setInitialData();
   }, []);
 
+  //Run repeatedly
+  useEffect(() => {
+    const interval = window.setInterval(refresh, 1000);
+    return () => clearInterval(interval);
+  });
+
+  const setInitialData = () => {
+    const stngs = settings || initialSettings,
+      sd = sdate || initialSDate,
+      nowTime = currentTime,
+      location = stngs.location,
+      snst = sunTimes.sunset,
+      jd = jdate || Utils.isTimeAfter(snst, nowTime)
+        ? new jDate(Utils.addDaysToSdate(sd, 1))
+        : new jDate(sd),
+      zmanTimes = ZmanimUtils.getCorrectZmanTimes(sd, nowTime, stngs.location, stngs.zmanimToShow, stngs.minToShowPassedZman, snst as Time),      
+    shulZmanim = ZmanimUtils.getBasicShulZmanim(jd, location);
+    setNeedsNotificationsRefresh( true);
+  };
   const refresh = () => {
     const sd = new Date(),
       nowTime = Utils.timeFromDate(sd);
@@ -114,7 +113,7 @@ function App() {
       //Nullify passed zmanim, we are refreshing anyway.
       shulZmanim.alos = undefined;
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
-        shulZmanim.chatzosHalayla= undefined;
+        shulZmanim.chatzosHalayla = undefined;
       }
       console.log("Refreshing notifications due to chatzos hayom.");
       return true;
@@ -161,7 +160,7 @@ function App() {
     if (
       !sdate ||
       sd.getDate() !== sdate.getDate() ||
-      (!!zmanTimes &&
+      ( !zmanTimes ||
         zmanTimes.some(
           (zt) =>
             !zt.isTomorrow &&
@@ -187,9 +186,16 @@ function App() {
       <h2>{jdate.toStringHeb()}</h2>
       <h3>{Utils.toStringDate(sdate)}</h3>
       <h1>{Utils.getTimeString(currentTime)}</h1>
-      {settings && settings.zmanimToShow
-        ? settings.zmanimToShow.map((zis, index) => <div key={index}></div>)
-        : null}
+      {zmanTimes &&
+        zmanTimes.map((zis, index) => (
+          <SingleZman
+            key={index}
+            currentTime={currentTime}
+            zt={zis}
+            index={index}
+            itemHeight={15}
+          />
+        ))}
     </div>
   );
 }

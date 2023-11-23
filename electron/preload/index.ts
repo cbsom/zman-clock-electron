@@ -1,67 +1,71 @@
-import { contextBridge, ipcRenderer } from "electron"
+import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld('ipcRenderer', withPrototype(ipcRenderer))
+contextBridge.exposeInMainWorld("ipcRenderer", withPrototype(ipcRenderer));
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  sendMessageToMainProcess: (channel:string, payload:object) => ipcRenderer.invoke(channel, payload),
-})
+contextBridge.exposeInMainWorld("electronAPI", {
+  sendMessageToMainProcess: (channel: string, payload: object) =>
+    ipcRenderer.invoke(channel, payload),
+});
 
-contextBridge.exposeInMainWorld('electron', withPrototype({
-  settings: {
-    get() {
-      return ipcRenderer.sendSync('electron-get-settings');
+contextBridge.exposeInMainWorld(
+  "electron",
+  withPrototype({
+    settings: {
+      get() {
+        return ipcRenderer.sendSync("electron-get-settings");
+      },
+      set(settings: any) {
+        ipcRenderer.send("electron-set-settings", settings);
+      },
     },
-    set(settings: any) {
-      ipcRenderer.send('electron-set-settings', settings);
-    },
-  },
-}));
+  })
+);
 
 // `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually patching it.
 function withPrototype(obj: Record<string, any>) {
-  const protos = Object.getPrototypeOf(obj)
+  const protos = Object.getPrototypeOf(obj);
 
   for (const [key, value] of Object.entries(protos)) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) continue
+    if (Object.prototype.hasOwnProperty.call(obj, key)) continue;
 
-    if (typeof value === 'function') {
+    if (typeof value === "function") {
       // Some native APIs, like `NodeJS.EventEmitter['on']`, don't work in the Renderer process. Wrapping them into a function.
       obj[key] = function (...args: any) {
-        return value.call(obj, ...args)
-      }
+        return value.call(obj, ...args);
+      };
     } else {
-      obj[key] = value
+      obj[key] = value;
     }
   }
-  return obj
+  return obj;
 }
 
-function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
-  return new Promise(resolve => {
+function domReady(condition: DocumentReadyState[] = ["complete", "interactive"]) {
+  return new Promise((resolve) => {
     if (condition.includes(document.readyState)) {
-      resolve(true)
+      resolve(true);
     } else {
-      document.addEventListener('readystatechange', () => {
+      document.addEventListener("readystatechange", () => {
         if (condition.includes(document.readyState)) {
-          resolve(true)
+          resolve(true);
         }
-      })
+      });
     }
-  })
+  });
 }
 
 const safeDOM = {
   append(parent: HTMLElement, child: HTMLElement) {
-    if (!Array.from(parent.children).find(e => e === child)) {
-      return parent.appendChild(child)
+    if (!Array.from(parent.children).find((e) => e === child)) {
+      return parent.appendChild(child);
     }
   },
   remove(parent: HTMLElement, child: HTMLElement) {
-    if (Array.from(parent.children).find(e => e === child)) {
-      return parent.removeChild(child)
+    if (Array.from(parent.children).find((e) => e === child)) {
+      return parent.removeChild(child);
     }
   },
-}
+};
 
 /**
  * https://tobiasahlin.com/spinkit
@@ -70,7 +74,7 @@ const safeDOM = {
  * https://matejkustec.github.io/SpinThatShit
  */
 function useLoading() {
-  const className = `loaders-css__square-spin`
+  const className = `loaders-css__square-spin`;
   const styleContent = `
 @keyframes square-spin {
   25% { transform: perspective(100px) rotateX(180deg) rotateY(0); }
@@ -80,10 +84,20 @@ function useLoading() {
 }
 .${className} > div {
   animation-fill-mode: both;
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
+  width: 175px;
+  height: 75px;
+  background: #111;
+  border-radius:50px;
+  text-align:center;
+  color: #987;  
+  padding:40% 20px 40% 20px;  
+  font-family:Baskerville, Helvetica, Georgia, 'Trebuchet MS','Computer Modern';
+  font-size:35px;
+  font-weight:bold;
+  animation: square-spin 5s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
+}
+.${className} > div:before { 
+  content: "Zman Clock";
 }
 .app-loading-wrap {
   position: fixed;
@@ -97,36 +111,36 @@ function useLoading() {
   background: #282c34;
   z-index: 9;
 }
-    `
-  const oStyle = document.createElement('style')
-  const oDiv = document.createElement('div')
+    `;
+  const oStyle = document.createElement("style");
+  const oDiv = document.createElement("div");
 
-  oStyle.id = 'app-loading-style'
-  oStyle.innerHTML = styleContent
-  oDiv.className = 'app-loading-wrap'
-  oDiv.innerHTML = `<div class="${className}"><div></div></div>`
+  oStyle.id = "app-loading-style";
+  oStyle.innerHTML = styleContent;
+  oDiv.className = "app-loading-wrap";
+  oDiv.innerHTML = `<div class="${className}"><div></div></div>`;
 
   return {
     appendLoading() {
-      safeDOM.append(document.head, oStyle)
-      safeDOM.append(document.body, oDiv)
+      safeDOM.append(document.head, oStyle);
+      safeDOM.append(document.body, oDiv);
     },
     removeLoading() {
-      safeDOM.remove(document.head, oStyle)
-      safeDOM.remove(document.body, oDiv)
+      safeDOM.remove(document.head, oStyle);
+      safeDOM.remove(document.body, oDiv);
     },
-  }
+  };
 }
 
 // ----------------------------------------------------------------------
 
-const { appendLoading, removeLoading } = useLoading()
-domReady().then(appendLoading)
+const { appendLoading, removeLoading } = useLoading();
+domReady().then(appendLoading);
 
 window.onmessage = (ev) => {
-  ev.data.payload === 'removeLoading' && removeLoading()
-}
+  ev.data.payload === "removeLoading" && removeLoading();
+};
 
-setTimeout(removeLoading, 4999)
+setTimeout(removeLoading, 10000);
 
 // ----------------------------------------------------------------------
