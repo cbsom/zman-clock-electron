@@ -3,8 +3,8 @@ import { jDate, Utils, getNotifications, ZmanimUtils, Zmanim, findLocation } fro
 import { useSettingsData } from "./settingsContext";
 import Settings from "./settings";
 import "./App.css";
-import type { SunTimes, Time } from "./jcal-zmanim/jcal-zmanim";
-import type { ShulZmanimType, ZmanTime } from "./App";
+
+import type {SunTimes, Time,  ShulZmanimType, ZmanTime} from "./jcal-zmanim";
 
 function App() {
   const initialSettings = new Settings();
@@ -99,37 +99,37 @@ function App() {
     //Notifications need refreshing by chatzos, alos and shkia
     if (shkia && Utils.isTimeAfter(shkia, nowTime)) {
       //We only want to refresh the notifications one time
-      shulZmanim.shkia = null;
+      shulZmanim.shkia = undefined;
       //Nullify passed zmanim, we are refreshing anyway.
-      shulZmanim.alos = null;
-      shulZmanim.chatzosHayom = null;
+      shulZmanim.alos = undefined;
+      shulZmanim.chatzosHayom = undefined;
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
-        shulZmanim.chatzosHalayla = null;
+        shulZmanim.chatzosHalayla = undefined;
       }
       console.log("Refreshing notifications due to shkia.");
       return true;
     } else if (chatzosHayom && Utils.isTimeAfter(chatzosHayom, nowTime)) {
       //We only want to refresh the notifications one time
-      shulZmanim.chatzosHayom = null;
+      shulZmanim.chatzosHayom = undefined;
       //Nullify passed zmanim, we are refreshing anyway.
-      shulZmanim.alos = null;
+      shulZmanim.alos = undefined;
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
-        shulZmanim.chatzosHalayla = null;
+        shulZmanim.chatzosHalayla= undefined;
       }
       console.log("Refreshing notifications due to chatzos hayom.");
       return true;
     } else if (alos && Utils.isTimeAfter(alos, nowTime)) {
       //We only want to refresh the notifications one time
-      shulZmanim.alos = null;
+      shulZmanim.alos = undefined;
       //Nullify passed zmanim, we are refreshing anyway.
       if (chatzosHalayla && chatzosHalayla.hour < 12) {
-        shulZmanim.chatzosHalayla = null;
+        shulZmanim.chatzosHalayla = undefined;
       }
       console.log("Refreshing notifications due to alos.");
       return true;
     } else if (chatzosHalayla && Utils.isTimeAfter(chatzosHalayla, nowTime)) {
       //We only want to refresh the notifications one time
-      shulZmanim.chatzosHalayla = null;
+      shulZmanim.chatzosHalayla = undefined;
       console.log("Refreshing notifications due to chatzosHalayla.");
       return true;
     }
