@@ -85,19 +85,11 @@ function useLoading() {
 .${className} > div {
   animation-fill-mode: both;
   width: 175px;
-  height: 75px;
-  background: #111;
-  border-radius:50px;
-  text-align:center;
-  color: #987;  
-  padding:40% 20px 40% 20px;  
-  font-family:Baskerville, Helvetica, Georgia, 'Trebuchet MS','Computer Modern';
-  font-size:35px;
-  font-weight:bold;
+  height: 175px;   
   animation: square-spin 5s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
 }
 .${className} > div:before { 
-  content: "Zman Clock";
+  content: "";
 }
 .app-loading-wrap {
   position: fixed;
@@ -118,7 +110,7 @@ function useLoading() {
   oStyle.id = "app-loading-style";
   oStyle.innerHTML = styleContent;
   oDiv.className = "app-loading-wrap";
-  oDiv.innerHTML = `<div class="${className}"><div></div></div>`;
+  oDiv.innerHTML = `<div class="${className}"><div><img src='favicon.png' /></div></div>`;
 
   return {
     appendLoading() {

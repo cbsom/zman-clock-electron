@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { jDate, Utils, getNotifications, ZmanimUtils, Zmanim, findLocation } from "./jcal-zmanim";
-import { useSettingsData } from "./settingsContext";
-import Settings from "./settings";
-import { SingleZman } from "./components/SingleZman";
-import "./css/App.css";
+import { jDate, Utils, getNotifications, ZmanimUtils, Zmanim, findLocation } from "../jcal-zmanim";
+import { useSettingsData } from "../settingsContext";
+import Settings from "../settings";
+import { SingleZman } from "../components/SingleZman";
+import "./index.tsx.css";
 
-import type { SunTimes, Time, ShulZmanimType, ZmanTime } from "./jcal-zmanim";
+import type { SunTimes, Time, ShulZmanimType, ZmanTime } from "../jcal-zmanim";
 
 function App() {
   const initialSettings = new Settings();
@@ -28,9 +28,9 @@ function App() {
   );
   const [zmanTimes, setZmanTimes] = useState<ZmanTime[]>();
   const [needsNotificationsRefresh, setNeedsNotificationsRefresh] = useState(true);
- 
+
   //Run once
-  useEffect(() => {    
+  useEffect(() => {
     const jlm = findLocation("Jerusalem");
     if (!!jlm) {
       const ns = { ...settings, location: jlm };
@@ -51,12 +51,20 @@ function App() {
       nowTime = currentTime,
       location = stngs.location,
       snst = sunTimes.sunset,
-      jd = jdate || Utils.isTimeAfter(snst, nowTime)
-        ? new jDate(Utils.addDaysToSdate(sd, 1))
-        : new jDate(sd),
-      zmanTimes = ZmanimUtils.getCorrectZmanTimes(sd, nowTime, stngs.location, stngs.zmanimToShow, stngs.minToShowPassedZman, snst as Time),      
-    shulZmanim = ZmanimUtils.getBasicShulZmanim(jd, location);
-    setNeedsNotificationsRefresh( true);
+      jd =
+        jdate || Utils.isTimeAfter(snst, nowTime)
+          ? new jDate(Utils.addDaysToSdate(sd, 1))
+          : new jDate(sd),
+      zmanTimes = ZmanimUtils.getCorrectZmanTimes(
+        sd,
+        nowTime,
+        stngs.location,
+        stngs.zmanimToShow,
+        stngs.minToShowPassedZman,
+        snst as Time
+      ),
+      shulZmanim = ZmanimUtils.getBasicShulZmanim(jd, location);
+    setNeedsNotificationsRefresh(true);
   };
   const refresh = () => {
     const sd = new Date(),
@@ -160,13 +168,12 @@ function App() {
     if (
       !sdate ||
       sd.getDate() !== sdate.getDate() ||
-      ( !zmanTimes ||
-        zmanTimes.some(
-          (zt) =>
-            !zt.isTomorrow &&
-            Utils.totalMinutes(nowTime) - Utils.totalMinutes(zt.time) >=
-              settings.minToShowPassedZman
-        ))
+      !zmanTimes ||
+      zmanTimes.some(
+        (zt) =>
+          !zt.isTomorrow &&
+          Utils.totalMinutes(nowTime) - Utils.totalMinutes(zt.time) >= settings.minToShowPassedZman
+      )
     ) {
       return true;
     } else {
@@ -177,15 +184,33 @@ function App() {
   return (
     <div className="App">
       <h4>{settings.location.Name}</h4>
-      {notifications?.dayNotes.map((n, index) => (
-        <div key={index.toString()}>{n}</div>
-      ))}
-      {notifications?.tefillahNotes.map((n, index) => (
-        <div key={index.toString()}>{n}</div>
-      ))}
-      <h2>{jdate.toStringHeb()}</h2>
-      <h3>{Utils.toStringDate(sdate)}</h3>
-      <h1>{Utils.getTimeString(currentTime)}</h1>
+      <h2 className="date-text">{settings.english ? jdate.toString() : jdate.toStringHeb()}</h2>
+      <h3 className="s-date-text">
+        {settings.english
+          ? Utils.toStringDate(sdate)
+          : Utils.toShortStringDate(sdate, !settings.location.Israel)}
+      </h3>
+      {!!notifications?.dayNotes && notifications.dayNotes.length > 0 && (
+        <div className="day-notes-inner-view">
+          {notifications.dayNotes.map((n, index) => (
+            <div className="day-notes-text" key={index.toString()}>
+              {n}
+            </div>
+          ))}
+        </div>
+      )}
+      {!!notifications?.tefillahNotes && notifications?.tefillahNotes.length > 0 && (
+        <div className="day-notes-inner-view">
+          {notifications.tefillahNotes.map((n, index) => (
+            <div className="tefillah-notes-text" key={index.toString()}>
+              {n}
+            </div>
+          ))}
+        </div>
+      )}
+      <h1 className={!!settings.english ? "time-Text1Eng" : "time-text1"}>
+        {Utils.getTimeString(currentTime)}
+      </h1>
       {zmanTimes &&
         zmanTimes.map((zis, index) => (
           <SingleZman

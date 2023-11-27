@@ -1,0 +1,105 @@
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.logo-box {
+    position: relative;
+    height: 9em;
+}
+
+.logo {
+    position: absolute;
+    left: calc(50% - 4.5em);
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+}
+.logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+@keyframes logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .logo.electron {
+        animation: logo-spin infinite 20s linear;
+    }
+}
+.day-Notes-View {
+    margin-top: 10px;
+    width: 100%;
+}
+.day-Notes-Inner-View {
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.day-Notes-Text {
+    color: #7777AA;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 27px;
+    padding-right: 8px;
+    padding-left: 8px;
+    margin-bottom: 3px;
+    border-radius: 6px;
+    text-align: center;
+}
+.tefillah-Notes-View {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.tefillah-Notes-Inner-View {
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.tefillah-Notes-Text {
+    color: #889999;
+    font-size: 12px;
+    line-height: 24px;
+    background-color: #111124;
+    padding-right: 8px;
+    padding-left: 8px;
+    margin-bottom: 3px;
+    border-radius: 6px;
+    text-align: center;
+}
+.date-Text {
+    color: #bb8888;
+    font-size: 25px;
+    text-align: center;
+}
+.s-Date-Text {
+    color: #876;
+    font-size: 15px;
+    text-align: center;
+}
+.time-Text1 {
+    color: #559955;
+    font-size: 80px;
+    padding: 1px;    
+}
+.time-Text1Eng {
+    color: #559955;
+    font-size: 60px;    
+}
+.time-Now-Text {
+    color: #9999ff;
+    font-size: 20px;
+    font-weight: bold;
+}

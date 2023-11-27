@@ -9,30 +9,6 @@
     margin-bottom: 7px;
     min-width:500px;
 }
-.date-text {
-    color: #bb8888;
-    font-size: 25px;
-}
-.s-date-text {
-    color: #876;
-    font-size: 15px;
-}
-.time-text1 {
-    color: #559955;
-    font-size: 80px;
-    padding: 1px;
-    margin-bottom: 15px;
-}
-.time-text-eng {
-    color: #559955;
-    font-size: 60px;
-    margin-bottom: 12px;
-}
-.time-now-text {
-    color: #9999ff;
-    font-size: 20px;
-    font-weight: bold;
-}
 .zman-time-text {
     color: #99bb99;
 }

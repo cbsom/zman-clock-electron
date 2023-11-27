@@ -17,7 +17,7 @@ const SingleZman: FunctionComponent<SingleZManProps> = ({
   index,
   itemHeight,
 }: SingleZManProps) => {
-  const { settings, setSettings } = useSettingsData();
+  const { settings } = useSettingsData();
   const { english, numberOfItemsToShow, location } = settings;
   if (index >= numberOfItemsToShow) return null;
   const timeDiff = Utils.timeDiff(currentTime, zt.time, !zt.isTomorrow),
@@ -54,16 +54,16 @@ const SingleZman: FunctionComponent<SingleZManProps> = ({
           className={
             was
               ? english
-                ? 'zman-type-name-text-was-eng'
-                : 'zman-type-name-text-was'
+                ? "zman-type-name-text-was-eng"
+                : "zman-type-name-text-was"
               : english
-              ? 'zman-type-name-text-eng'
-              : 'zman-type-name-text'
+              ? "zman-type-name-text-eng"
+              : "zman-type-name-text"
           }>
           {`${
             zt.time && zt.isTomorrow && zt.time.hour > 2 ? (english ? " Tomorrow" : "מחר ") : ""
           } ${english ? "at" : "בשעה"}: `}
-          <span className={isWithin10 ? 'within-10-zman-time-text' : 'zman-time-text'}>
+          <span className={isWithin10 ? "within-10-zman-time-text" : "zman-time-text"}>
             {Utils.getTimeString(zt.time, 1, location.Israel)}
           </span>
         </span>
