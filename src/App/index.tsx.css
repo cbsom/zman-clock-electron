@@ -36,18 +36,52 @@
         animation: logo-spin infinite 20s linear;
     }
 }
-.day-Notes-View {
+.app {
+   display: flex;
+}
+h2,
+h1,
+h3,
+h4,
+h5 {
+    line-height:initial;
+    margin:5px;
+}
+.button-settings{
+    position: absolute;
+    top:10px;
+    right:10px;
+    z-index: 1000;
+}
+.top-section {
+    padding: 0 0 10px 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    height: 200px;
+    background-color: #1e1e1e;
+}
+.zmanim-section {
+    margin-top: 185px;
+    display: flex;     
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: calc(95vh - 200px);
+}
+.day-notes-view {
     margin-top: 10px;
     width: 100%;
 }
-.day-Notes-Inner-View {
+.day-notes-inner-view {
     justify-content: space-around;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
 }
-.day-Notes-Text {
-    color: #7777AA;
+.day-notes-text {
+    color: #7777aa;
     font-weight: bold;
     font-size: 14px;
     line-height: 27px;
@@ -57,18 +91,18 @@
     border-radius: 6px;
     text-align: center;
 }
-.tefillah-Notes-View {
+.tefillah-notes-view {
     margin-top: 10px;
     margin-bottom: 10px;
     width: 100%;
 }
-.tefillah-Notes-Inner-View {
+.tefillah-notes-inner-view {
     justify-content: space-around;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
 }
-.tefillah-Notes-Text {
+.tefillah-notes-text {
     color: #889999;
     font-size: 12px;
     line-height: 24px;
@@ -79,26 +113,26 @@
     border-radius: 6px;
     text-align: center;
 }
-.date-Text {
+.date-text {
     color: #bb8888;
     font-size: 25px;
     text-align: center;
 }
-.s-Date-Text {
+.s-date-text {
     color: #876;
     font-size: 15px;
     text-align: center;
 }
-.time-Text1 {
+.time-text {
     color: #559955;
     font-size: 80px;
-    padding: 1px;    
+    padding: 1px;
 }
-.time-Text1Eng {
+.time-text-eng {
     color: #559955;
-    font-size: 60px;    
+    font-size: 60px;
 }
-.time-Now-Text {
+.time-now-text {
     color: #9999ff;
     font-size: 20px;
     font-weight: bold;

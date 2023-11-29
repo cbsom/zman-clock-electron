@@ -64,7 +64,7 @@ const SingleZman: FunctionComponent<SingleZManProps> = ({
             zt.time && zt.isTomorrow && zt.time.hour > 2 ? (english ? " Tomorrow" : "מחר ") : ""
           } ${english ? "at" : "בשעה"}: `}
           <span className={isWithin10 ? "within-10-zman-time-text" : "zman-time-text"}>
-            {Utils.getTimeString(zt.time, 1, location.Israel)}
+            {Utils.getTimeString(zt.time, 1, settings.armyTime)}
           </span>
         </span>
       </div>

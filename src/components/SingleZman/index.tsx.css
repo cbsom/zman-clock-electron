@@ -5,9 +5,10 @@
     justify-content: center;
     align-items: center;
     border-radius: 7px;
-    padding: 12px 20px;    
-    margin-bottom: 7px;
+    padding: 12px 20px;
     min-width:500px;
+    min-height:90px;
+    margin: 5px;
 }
 .zman-time-text {
     color: #99bb99;
