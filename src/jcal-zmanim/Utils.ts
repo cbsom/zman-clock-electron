@@ -3,7 +3,7 @@ import jDate from './JCal/jDate.js';
 import Location from './JCal/Location.js';
 import { Time } from './jcal-zmanim.js';
 
-const __DEV__ = process.env.NODE_ENV === 'development';
+export const __DEV__ = process.env.NODE_ENV === 'development';
 
 export const DaysOfWeek = Object.freeze({
     SUNDAY: 0,

@@ -1,10 +1,10 @@
-import { Utils, DaysOfWeek, JewishMonthsNames as m } from './Utils.js';
+import {Utils, __DEV__, DaysOfWeek, JewishMonthsNames as m} from './Utils.js';
 import jDate from './JCal/jDate.js';
 import Molad from './JCal/Molad.js';
 import PirkeiAvos from './JCal/PirkeiAvos.js';
 import ZmanimUtils from './JCal/ZmanimUtils.js';
 import Location from './JCal/Location.js';
-import { Time } from './jcal-zmanim.js';
+import {Time} from './jcal-zmanim.js';
 
 type DayInfo = {
     jdate: jDate,
@@ -34,22 +34,26 @@ let showEnglish = false,
 
 /**
  * Get shul notifications for the given date and location
- * @param date 
- * @param time 
- * @param location 
- * @param english 
+ * @param date
+ * @param time
+ * @param location
+ * @param english
  * @param showGaonShir
- * @param showDafYomi 
+ * @param showDafYomi
  * @returns {{ dayNotes: string[], tefillahNotes: string[]}}
  */
 export function getNotifications(date: jDate | Date, time: Time, location: Location, english: boolean, showGaonShir?: boolean, showDafYomi?: boolean) {
-    const { sdate, jdate } = Utils.bothDates(date);
+    const {sdate, jdate} = Utils.bothDates(date);
     dayNotes.length = 0;
     tefillahNotes.length = 0;
+    if (__DEV__) {
+        dayNotes.push('Test Day Note');
+        tefillahNotes.push('Test Tefillah Note');
+    }
     const month = jdate.Month,
         day = jdate.Day,
         dow = jdate.DayOfWeek,
-        { chatzosHayom, chatzosHalayla, alos, shkia, } = ZmanimUtils.getBasicShulZmanim(date, location),
+        {chatzosHayom, chatzosHalayla, alos, shkia,} = ZmanimUtils.getBasicShulZmanim(date, location),
         isAfterChatzosHayom = Utils.isTimeAfter(chatzosHayom, time),
         isAfterChatzosHalayla = (typeof (chatzosHalayla) !== 'undefined') &&
             (Utils.isTimeAfter(chatzosHalayla, time) || (chatzosHalayla.hour > 12 && time.hour < 12)), //Chatzos is before 0:00 and time is after 0:00
@@ -1197,7 +1201,7 @@ function addTefillahNote(englishOrDefaultText: string, hebrewText?: string) {
 }
 
 function hasOwnKriyasHatorah(jdate: jDate, location: Location) {
-    const { Month, Day, DayOfWeek } = jdate;
+    const {Month, Day, DayOfWeek} = jdate;
     //Rosh chodesh
     if (Day === 1 || Day === 30) {
         return true;
