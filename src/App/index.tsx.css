@@ -83,10 +83,12 @@ h5 {
 }
 
 .day-notes-inner-view {
-    justify-content: space-around;
+    justify-content: center;
+    gap:4vw;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
+    display: flex;
 }
 
 .day-notes-text {
@@ -108,7 +110,9 @@ h5 {
 }
 
 .tefillah-notes-inner-view {
-    justify-content: space-around;
+    display: flex;
+    justify-content: center;
+    gap:2vw;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;

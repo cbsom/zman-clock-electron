@@ -1,5 +1,5 @@
 import { Location, findLocation, ZmanTypeIds, getZmanType, Utils } from "./jcal-zmanim";
-import { ZmanToShow } from "./jcal-zmanim/jcal-zmanim";
+import { ZmanToShow } from "@/jcal-zmanim";
 
 export default class Settings {
   zmanimToShow: ZmanToShow[];

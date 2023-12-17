@@ -47,8 +47,8 @@ export function getNotifications(date: jDate | Date, time: Time, location: Locat
     dayNotes.length = 0;
     tefillahNotes.length = 0;
     if (__DEV__) {
-        dayNotes.push('Test Day Note');
-        tefillahNotes.push('Test Tefillah Note');
+        //dayNotes.push('Test Day Note');
+        //tefillahNotes.push('Test Tefillah Note');
     }
     const month = jdate.Month,
         day = jdate.Day,
