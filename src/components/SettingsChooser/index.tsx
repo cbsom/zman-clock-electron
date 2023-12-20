@@ -5,7 +5,11 @@ import ToggleSwitch from "@/components/toggleSwitch";
 import Settings from "@/settings";
 import LocationChooser from "@/components/LocationChooser";
 
-export default function SettingsChooser() {
+interface SettingsChooserProps {
+    onChangeSettings: () => any
+}
+
+export default function SettingsChooser({onChangeSettings}: SettingsChooserProps) {
     const {settings, setSettings} = useSettingsData();
     const [showLocationChooser, setShowLocationChooser] = useState(false);
 
@@ -18,15 +22,19 @@ export default function SettingsChooser() {
             list = list.filter(zts => zts.id !== zt.id);
         }
         setSettings({...settings, zmanimToShow: list} as Settings);
+        onChangeSettings();
     }
 
     function changeLocation(location: Location) {
-        setSettings({...settings, location: location} as Settings);
+        if (!!location) {
+            setSettings({...settings, location: location} as Settings);
+            setShowLocationChooser(false);
+            onChangeSettings();
+        }
     }
 
     return (
-        <main
-            className="">
+        <main style={{direction: "ltr"}}>
             {showLocationChooser
                 ? <LocationChooser location={settings.location}
                                    onChangeLocation={changeLocation}

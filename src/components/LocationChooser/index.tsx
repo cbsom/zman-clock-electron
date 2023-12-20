@@ -1,7 +1,9 @@
+import {useState} from 'react';
 import {Location, Locations} from "@/jcal-zmanim";
 
 type locationChooserProps = { location: Location, onChangeLocation: Function, onClose: Function }
 export default function LocationChooser({location, onChangeLocation, onClose}: locationChooserProps) {
+    const [list, setList] = useState(Locations);
 
     function changeLocation(loc: Location) {
         if (loc.Name !== location.Name) {
@@ -25,10 +27,13 @@ export default function LocationChooser({location, onChangeLocation, onClose}: l
             <section
                 className="h-full"
             >
-                {Locations.map(loc =>
-                    <div className="px-4 py-1 text-gray-400  cursor-pointer" key={loc.Name}
+                <input type="text" placeholder="Filter" onChange={e =>
+                    setList(Locations.filter(l =>
+                        (`${l.Name} ${(!!l.NameHebrew) ? '  ' + l.NameHebrew : ''}`).toLowerCase().includes(e.target.value.toLowerCase())))}/>
+                {list.map(loc =>
+                    <div className="px-4 py-1 text-gray-400 text-left  cursor-pointer" key={loc.Name}
                          onClick={() => changeLocation(loc)}>
-                        {`${loc.Name} ${(!!loc.NameHebrew)? '  ' + loc.NameHebrew:''}`}
+                        {`${loc.Name} ${(!!loc.NameHebrew) ? '  ' + loc.NameHebrew : ''}`}
                     </div>)}
             </section>
         </main>

@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
-import {jDate, Utils, getNotifications, ZmanimUtils, Zmanim, findLocation} from "../jcal-zmanim";
+import {Helmet} from "react-helmet";
+import {jDate, Utils, getNotifications, ZmanimUtils, Zmanim} from "../jcal-zmanim";
 import {useSettingsData} from "@/settingsContext";
 import Settings from "../settings";
 import {SingleZman} from "@/components/SingleZman";
@@ -13,11 +14,11 @@ function App() {
     const initialSettings = new Settings();
     const initialSDate = new Date();
     const initialJdate = new jDate(initialSDate);
-    const {settings, setSettings} = useSettingsData();
+    const {settings} = useSettingsData();
 
     const [sdate, setSdate] = useState<Date>(initialSDate);
     const [jdate, setJdate] = useState<jDate>(initialJdate);
-    const [sunTimes, setSunTimes] = useState<SunTimes>(
+    const [sunTimes] = useState<SunTimes>(
         initialJdate.getSunriseSunset(initialSettings.location)
     );
     const [currentTime, setCurrentTime] = useState<Time>(Utils.timeFromDate(initialSDate));
@@ -44,24 +45,6 @@ function App() {
     });
 
     const setInitialData = () => {
-        const stngs = settings || initialSettings,
-            sd = sdate || initialSDate,
-            nowTime = currentTime,
-            location = stngs.location,
-            snst = sunTimes.sunset,
-            jd =
-                jdate || Utils.isTimeAfter(snst, nowTime)
-                    ? new jDate(Utils.addDaysToSdate(sd, 1))
-                    : new jDate(sd),
-            zmanTimes = ZmanimUtils.getCorrectZmanTimes(
-                sd,
-                nowTime,
-                stngs.location,
-                stngs.zmanimToShow,
-                stngs.minToShowPassedZman,
-                snst as Time
-            ),
-            shulZmanim = ZmanimUtils.getBasicShulZmanim(jd, location);
         setNeedsNotificationsRefresh(true);
     };
     const refresh = () => {
@@ -147,6 +130,7 @@ function App() {
                     jdate,
                     currentTime,
                     settings.location,
+                    settings.english,
                     settings.showGaonShir,
                     settings.showDafYomi
                 );
@@ -163,24 +147,21 @@ function App() {
         }
     };
     const needsZmanRefresh = (sd: Date, nowTime: Time) => {
-        if (
-            !sdate ||
+        return !sdate ||
             sd.getDate() !== sdate.getDate() ||
             !zmanTimes ||
             zmanTimes.some(
                 (zt) =>
                     !zt.isTomorrow &&
                     Utils.totalMinutes(nowTime) - Utils.totalMinutes(zt.time) >= settings.minToShowPassedZman
-            )
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+            );
     };
 
     return (
         <div className="app">
+            <Helmet>
+                <link rel="stylesheet" href={`/${settings.english ? 'eng' : 'heb'}.css`}/>
+            </Helmet>
             <div className="fixed top-7 right-3 z-10">
                 <a
                     href="#"
@@ -204,7 +185,11 @@ function App() {
                 </a>
             </div>
             <div className="top-section">
-                <h4>{settings.location.Name}</h4>
+                <h4>{settings.english
+                    ? settings.location.Name
+                    : (!!settings.location.NameHebrew
+                        ? settings.location.NameHebrew
+                        : settings.location.Name)}</h4>
                 <h2 className="date-text">{settings.english ? jdate.toString() : jdate.toStringHeb()}</h2>
                 <h3 className="s-date-text">
                     {settings.english
@@ -229,7 +214,7 @@ function App() {
                         ))}
                     </div>
                 )}
-                <h1 className={!!settings.english ? "time-text-eng" : "time-text"}>
+                <h1 className={settings.english ? "time-text-eng" : "time-text"}>
                     {Utils.getTimeString(currentTime, undefined, settings.armyTime)}
                 </h1>
             </div>
@@ -246,7 +231,7 @@ function App() {
                     ))}
             </div>
             <Drawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-               <SettingsChooser />
+                <SettingsChooser onChangeSettings={() => setNeedsNotificationsRefresh(true)}/>
             </Drawer>
         </div>
     );
