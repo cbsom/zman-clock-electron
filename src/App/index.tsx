@@ -60,8 +60,7 @@ function App() {
             setSdate(sd);
             setCurrentTime(nowTime);
             setJdate(jdate);
-        }
-        else {
+        } else {
             console.log("Refreshing all zmanim");
             const sunset = Zmanim.getSunTimes(sd, settings.location).sunset,
                 jdate = Utils.isTimeAfter(sunset, nowTime)
@@ -235,7 +234,8 @@ function App() {
                     ))}
             </div>
             <Drawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-                <SettingsChooser onChangeSettings={() => setNeedsFullRefresh(true)}/>
+                <SettingsChooser onChangeSettings={() => setNeedsFullRefresh(true)}
+                                 onClose={() => setIsDrawerOpen(false)}/>
             </Drawer>
         </div>
     );

@@ -4,12 +4,13 @@ import {__DEV__} from "@/jcal-zmanim/Utils";
 
 interface SettingsContextType {
     settings: Settings,
+
     setSettings(settings: Settings): any;
 }
 
 declare global {
     interface Window {
-        electron: { settings: { get:Function, set:Function} }
+        electron: { settings: { get: Function, set: Function } }
     }
 }
 
@@ -30,6 +31,13 @@ export const SettingsProvider = (props: PropsWithChildren) => {
                 setStateSettings(s);
                 __DEV__ && console.log('getSettings', s)
             }
+        } else {
+            const s = localStorage.getItem('Settings')
+            if (s) {
+                const sObj = JSON.parse(s);
+                setStateSettings(sObj);
+                __DEV__ && console.log('get local storage settings', sObj)
+            }
         }
     }, [])
 
@@ -39,6 +47,11 @@ export const SettingsProvider = (props: PropsWithChildren) => {
             setStateSettings(s);
             __DEV__ && console.log('setSettings', s)
         }
+
+        const sStr = JSON.stringify(s)
+        localStorage.setItem('Settings', sStr);
+        setStateSettings(s);
+        __DEV__ && console.log('set localstorage settings', s)
     }
 
     return (

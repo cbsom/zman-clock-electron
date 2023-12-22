@@ -4,12 +4,14 @@ import {Location, ZmanToShow, ZmanTypes} from "@/jcal-zmanim";
 import ToggleSwitch from "@/components/toggleSwitch";
 import Settings from "@/settings";
 import LocationChooser from "@/components/LocationChooser";
+import CloseButton from "@/components/CloseButton";
 
 interface SettingsChooserProps {
-    onChangeSettings: () => any
+    onChangeSettings: () => any,
+    onClose:Function
 }
 
-export default function SettingsChooser({onChangeSettings}: SettingsChooserProps) {
+export default function SettingsChooser({onChangeSettings, onClose}: SettingsChooserProps) {
     const {settings, setSettings} = useSettingsData();
     const [showLocationChooser, setShowLocationChooser] = useState(false);
     const eng = settings.english;
@@ -43,8 +45,9 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
                                    onClose={() => setShowLocationChooser(false)}/>
                 : <>
                     <section>
-                        <article>
+                        <article className='flex justify-between flex-row align-bottom p-2'>
                             <header className="p-4 font-bold text-lg">{eng ? 'Settings' : 'הגדרות'}</header>
+                            <CloseButton onClick={() => onClose()}/>
                         </article>
                     </section>
                     <section

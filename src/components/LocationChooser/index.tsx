@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {Location, Locations} from "@/jcal-zmanim";
+import CloseButton from "@/components/CloseButton";
 
 type locationChooserProps = { location: Location, eng: boolean, onChangeLocation: Function, onClose: Function }
 export default function LocationChooser({location, eng, onChangeLocation, onClose}: locationChooserProps) {
@@ -16,11 +17,7 @@ export default function LocationChooser({location, eng, onChangeLocation, onClos
             <section className="">
                 <article className='flex justify-between flex-row align-bottom p-2'>
                     <header className="p-4 font-bold text-lg">{eng ? 'Locations' : 'מקומות'}</header>
-                    <button type="button"
-                            className="w-5 h-8 bg-amber-200 rounded-md inline-flex items-center justify-center text-amber-500 hover:text-amber-700 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                            onClick={() => onClose()}>
-                        x
-                    </button>
+                    <CloseButton  onClick={() => onClose()} />
                 </article>
             </section>
             <section
