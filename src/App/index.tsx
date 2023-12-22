@@ -30,6 +30,7 @@ function App() {
         ZmanimUtils.getBasicShulZmanim(initialSDate, initialSettings.location) as ShulZmanimType
     );
     const [zmanTimes, setZmanTimes] = useState<ZmanTime[]>();
+    const [needsFullRefresh, setNeedsFullRefresh] = useState(true);
     const [needsNotificationsRefresh, setNeedsNotificationsRefresh] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -46,6 +47,7 @@ function App() {
 
     const setInitialData = () => {
         setNeedsNotificationsRefresh(true);
+        setNeedsFullRefresh(true);
     };
     const refresh = () => {
         const sd = new Date(),
@@ -58,7 +60,8 @@ function App() {
             setSdate(sd);
             setCurrentTime(nowTime);
             setJdate(jdate);
-        } else {
+        }
+        else {
             console.log("Refreshing all zmanim");
             const sunset = Zmanim.getSunTimes(sd, settings.location).sunset,
                 jdate = Utils.isTimeAfter(sunset, nowTime)
@@ -79,6 +82,7 @@ function App() {
             setShulZmanim(ZmanimUtils.getBasicShulZmanim(sd, settings.location) as ShulZmanimType);
         }
         fillNotifications();
+        setNeedsFullRefresh(false);
     };
     const isPastShulZman = () => {
         const nowTime = currentTime,
@@ -147,7 +151,7 @@ function App() {
         }
     };
     const needsZmanRefresh = (sd: Date, nowTime: Time) => {
-        return !sdate ||
+        return needsFullRefresh || !sdate ||
             sd.getDate() !== sdate.getDate() ||
             !zmanTimes ||
             zmanTimes.some(
@@ -231,7 +235,7 @@ function App() {
                     ))}
             </div>
             <Drawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-                <SettingsChooser onChangeSettings={() => setNeedsNotificationsRefresh(true)}/>
+                <SettingsChooser onChangeSettings={() => setNeedsFullRefresh(true)}/>
             </Drawer>
         </div>
     );

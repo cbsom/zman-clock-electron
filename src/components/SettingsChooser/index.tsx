@@ -12,6 +12,7 @@ interface SettingsChooserProps {
 export default function SettingsChooser({onChangeSettings}: SettingsChooserProps) {
     const {settings, setSettings} = useSettingsData();
     const [showLocationChooser, setShowLocationChooser] = useState(false);
+    const eng = settings.english;
 
     function changeZmanToShowList(zt: ZmanToShow, checked: boolean) {
         let list: ZmanToShow[] = [...settings.zmanimToShow];
@@ -38,26 +39,28 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
             {showLocationChooser
                 ? <LocationChooser location={settings.location}
                                    onChangeLocation={changeLocation}
+                                   eng={eng}
                                    onClose={() => setShowLocationChooser(false)}/>
                 : <>
-                    <section className="">
+                    <section>
                         <article>
-                            <header className="p-4 font-bold text-lg">Settings</header>
+                            <header className="p-4 font-bold text-lg">{eng ? 'Settings' : 'הגדרות'}</header>
                         </article>
                     </section>
                     <section
                         className="h-full cursor-pointer "
                     >
                         <div className="flex flex-row justify-between items-center px-4 py-1">
-                            <div className="text-gray-400">Location</div>
-                            <div className="text-amber-400">{settings.location.Name}</div>
+                            <div className="text-gray-400">{eng ? 'Location' : 'מיקום'}</div>
+                            <div
+                                className="text-amber-400">{eng ? settings.location.Name : (settings.location.NameHebrew || settings.location.Name)}</div>
                             <div className={`ms-3 text-sm font-medium text-blue-700`}
-                                 onClick={() => setShowLocationChooser(true)}>Change
+                                 onClick={() => setShowLocationChooser(true)}>{eng ? 'Change' : 'עריכה'}
                             </div>
                         </div>
                         <div className="flex flex-col items-center gap-2 px-4 py-1">
                             <ToggleSwitch
-                                text="Language / שפה"
+                                text={eng ? 'Language' : 'שפה'}
                                 onText='English'
                                 offText='עברית'
                                 checked={settings.english}
@@ -67,9 +70,9 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
                                 } as Settings)}
                             />
                             <ToggleSwitch
-                                text="Show Notifications"
-                                onText='Showing'
-                                offText='Not Showing'
+                                text={eng ? 'Show Notifications' : 'הצג הודעות'}
+                                onText={eng ? 'Showing' : 'מציג'}
+                                offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.showNotifications}
                                 onChange={(checked: boolean) => setSettings({
                                     ...settings,
@@ -77,9 +80,9 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
                                 } as Settings)}
                             />
                             <ToggleSwitch
-                                text='Show Daf Yomi'
-                                onText='Showing'
-                                offText='Not Showing'
+                                text={eng ? 'Show Daf Yomi' : 'הצג דף היומי'}
+                                onText={eng ? 'Showing' : 'מציג'}
+                                offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.showDafYomi}
                                 onChange={(checked: boolean) => setSettings({
                                     ...settings,
@@ -87,9 +90,9 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
                                 } as Settings)}
                             />
                             <ToggleSwitch
-                                text="Army Time"
-                                onText='Showing'
-                                offText='Not Showing'
+                                text={eng ? '24 Hour [army] Clock' : 'שעון 24 שעות'}
+                                onText={eng ? 'Showing' : 'מציג'}
+                                offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.armyTime}
                                 onChange={(checked: boolean) => setSettings({
                                     ...settings,
@@ -99,9 +102,9 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
                         </div>
                         <div className="flex flex-col items-start px-4 py-1 text-gray-400">
                             <ToggleSwitch
-                                text='Show Shir-Shel-Yom of Gr"a'
-                                onText='Showing'
-                                offText='Not Showing'
+                                text={eng ? 'Show Shir-Shel-Yom of Gr"a' : 'הצג שיר של יום של הגר\"א'}
+                                onText={eng ? 'Showing' : 'מציג'}
+                                offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.showGaonShir}
                                 onChange={(checked: boolean) => setSettings({
                                     ...settings,
@@ -109,13 +112,35 @@ export default function SettingsChooser({onChangeSettings}: SettingsChooserProps
                                 } as Settings)}
                             />
                         </div>
-                        <header className="p-4 font-bold text-lg">Zmanim to Show</header>
+                        <div className="flex flex-row justify-between items-center px-4 py-1">
+                            <div
+                                className="text-gray-400">{eng ? 'Minutes to show past Zmanim' : 'דקות להציג זמנים שעברו'}</div>
+                            <input type="number" value={settings.minToShowPassedZman}
+                                   className="text-amber-400 w-1/5 rounded text-center"
+                                   onChange={e => setSettings({
+                                       ...settings,
+                                       minToShowPassedZman: parseInt(e.target.value)
+                                   }  as Settings)}
+                            />
+                        </div>
+                        <div className="flex flex-row justify-between items-center px-4 py-1">
+                            <div className="text-gray-400">{eng ? 'Number of Zmanim to Show' : 'מספר זמנים להציג'}</div>
+                            <input type="number" value={settings.numberOfItemsToShow}
+                                   className="text-amber-400  w-1/5 rounded text-center"
+                                   onChange={e => setSettings({
+                                       ...settings,
+                                       numberOfItemsToShow: parseInt(e.target.value)
+                                   }  as Settings)}
+                            />
+                        </div>
+
+                        <header className="p-4 font-bold text-lg">{eng ? 'Zmanim to Show' : 'זמנים להציג'}</header>
                         {ZmanTypes.map(zt =>
                             <div className="flex flex-col items-start px-4 py-1 text-gray-400" key={zt.id}>
                                 <ToggleSwitch
-                                    text={zt.eng}
-                                    onText='Showing'
-                                    offText='Not Showing'
+                                    text={eng ? zt.eng : zt.heb}
+                                    onText={eng ? 'Showing' : 'מציג'}
+                                    offText={eng ? 'Not Showing' : 'לא מציג'}
                                     checked={!!(settings.zmanimToShow.find(zts => zts.id === zt.id))}
                                     onChange={(checked: boolean) => changeZmanToShowList(zt, checked)}
                                 />

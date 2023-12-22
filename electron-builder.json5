@@ -12,6 +12,8 @@
     "dist"
   ],
   "mac": {
+    "category": "public.app-category.utilities",
+    "darkModeSupport": true,
     "artifactName": "${productName}_${version}.${ext}",
     "target": [
       "dmg",
@@ -27,7 +29,18 @@
         ]
       }
     ],
+    "publisherName": "CN=\"Compute Halacha\", O=\"Compute Halacha\", L=Jerusalem, C=IL",
     "artifactName": "${productName}_${version}.${ext}"
+  },
+  "deb": {
+    "artifactName": "${version}/${name}_${version}-1_${arch}.${ext}",
+    "synopsis": "Zman Clock Application",
+    "depends": [
+      "libnotify4",
+      "libxtst6",
+      "libnss3"
+    ],
+    "priority": "optional"
   },
   "nsis": {
     "oneClick": false,
