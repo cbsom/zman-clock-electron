@@ -15,15 +15,13 @@ export default function LocationChooser({location, eng, onChangeLocation, onClos
     return (
         <main>
             <section className="">
-                <article className='flex justify-between flex-row align-bottom p-2'>
+                <article className='flex justify-between flex-row align-tex-top p-2'>
                     <header className="p-4 font-bold text-lg">{eng ? 'Locations' : 'מקומות'}</header>
-                    <CloseButton  onClick={() => onClose()} />
+                    <CloseButton onClick={() => onClose()}/>
                 </article>
             </section>
-            <section
-                className="h-full"
-            >
-                <input type="text" placeholder={eng?'Filter':'חפש'} onChange={e =>
+            <section className="h-full">
+                <input type="text" className='p-3 rounded' placeholder={eng ? 'Filter' : 'חפש'} onChange={e =>
                     setList(Locations.filter(l =>
                         (`${l.Name} ${(!!l.NameHebrew) ? '  ' + l.NameHebrew : ''}`).toLowerCase().includes(e.target.value.toLowerCase())))}/>
                 {list.map(loc =>

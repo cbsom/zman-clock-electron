@@ -1,76 +1,49 @@
-*{margin:0;padding:0;border:none;}
-.close{
-    $size: 25px;
-    $borderSize: 2px;
-    $borderColor: rgba(#848eef,1);
-    $speed: .5s;
-    width:$size;
-    height:$size;
-    position: relative;
-    background: #455A64;
-    border-radius:50%;
-    box-shadow: 0 0 20px -5px rgba(white,.5);
-    transition: .25s ease-in-out;
-    cursor: pointer;
-    animation: fade-in $speed ease-out .25s both;
-    @keyframes fade-in {
-        from { opacity: 0; transform:scale(1.1) }
-    }
-    .circle {
-        path {
-            stroke: $borderColor;
-            fill: none;
-            stroke-width: $borderSize/2;
-            stroke-linecap: round;
-            animation: progress $speed ease-out .25s both;
-            @keyframes progress {
-                from { stroke-dasharray: 0 100; }
-            }
-        }
-    }
-    span{
-        display:block;
-        width:($size/4) - 2px;
-        height:$borderSize;
-        background: $borderColor;
-        box-shadow: 0 0 20px -5px rgba(white,.5);
-        border-radius: 20px;
-        position: absolute;
-        $padding: $size/3;
-        transition: .25s ease-in-out;
-        animation: slide-in $speed ease-in-out .25s both;
-        @keyframes slide-in {
-            from { width:0; }
-        }
-        &:nth-child(1){
-            top:($padding - ($borderSize/2));
-            left:$padding;
-            transform:rotate(45deg);
-            transform-origin: top left;
-        }
-        &:nth-child(2){
-            top:($padding - ($borderSize/2));
-            right:$padding;
-            transform:rotate(-45deg);
-            transform-origin: top right;
-        }
-        &:nth-child(3){
-            bottom:($padding - ($borderSize/2));
-            left:$padding;
-            transform:rotate(-45deg);
-            transform-origin: bottom left;
-        }
-        &:nth-child(4){
-            bottom:($padding - ($borderSize/2));
-            right:$padding;
-            transform:rotate(45deg);
-            transform-origin: bottom right;
-        }
-    }
-    &:hover{
-        background: #37474F;
-        span{
-            width:($size/4);
-        }
-    }
+// COLORS
+$soft-orange: rgba(244, 162, 89, 0.35);
+$tomato-red: rgba(242, 92, 102, 0.44);
+$medium-blue: #1E272D;
+
+.close-button {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
 }
+
+.left-right {
+  height: 2px;
+  width: 25px;
+  position: absolute;
+  margin-top: 12px;
+  background-color: $soft-orange;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  transition: all .3s ease-in;
+}
+
+.right-left {
+  height: 2px;
+  width: 25px;
+  position: absolute;
+  margin-top: 12px;
+  background-color: $soft-orange;
+  border-radius: 2px;
+  transform: rotate(-45deg);
+  transition: all .3s ease-in;
+}
+
+
+.close-button:hover .left-right {
+  transform: rotate(-45deg);
+  background-color: $tomato-red;
+}
+
+.close-button:hover .right-left {
+  transform: rotate(45deg);
+  background-color: $tomato-red;
+}
+
+.close-button:hover label {
+  opacity: 1;
+}
+

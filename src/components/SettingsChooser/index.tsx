@@ -45,7 +45,7 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
                                    onClose={() => setShowLocationChooser(false)}/>
                 : <>
                     <section>
-                        <article className='flex justify-between flex-row align-bottom p-2'>
+                        <article className='flex justify-between flex-row align-top p-2'>
                             <header className="p-4 font-bold text-lg">{eng ? 'Settings' : 'הגדרות'}</header>
                             <CloseButton onClick={() => onClose()}/>
                         </article>
