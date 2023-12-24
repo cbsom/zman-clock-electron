@@ -47,7 +47,7 @@ const indexHtml = join(process.env.DIST, "index.html");
 
 async function createWindow() {
     win = new BrowserWindow({
-        title: "Main window",
+        title: "Zman Clock - שעון זמנים",
         icon: join(process.env.VITE_PUBLIC, "favicon.ico"),
         autoHideMenuBar: false,
         //frame: false,
@@ -61,6 +61,7 @@ async function createWindow() {
             contextIsolation: true,
         },
     });
+    //win.setMenuBarVisibility(false);
 
     if (url) {
         // electron-vite-vue#298

@@ -42,59 +42,82 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
     return (
         <main style={{direction: "ltr"}}>
             {showLocationChooser
-                ? <LocationChooser location={settings.location}
-                                   onChangeLocation={changeLocation}
-                                   eng={eng}
-                                   onClose={() => setShowLocationChooser(false)}/>
+                ? <section className="h-full w-full">
+                    <LocationChooser location={settings.location}
+                                     onChangeLocation={changeLocation}
+                                     eng={eng}
+                                     onClose={() => setShowLocationChooser(false)}/>
+                </section>
                 : <>
                     <section>
                         <article className='flex justify-between flex-row align-top p-2'>
-                            <header className="p-4 font-bold text-lg">{eng ? 'Settings' : 'הגדרות'}</header>
+                            <header
+                                className="p-4 font-bold text-3xl flex-1 text-center  text-[#955]">{eng ? 'Settings' : 'הגדרות'}</header>
                             <CloseButton onClick={() => onClose()}/>
                         </article>
                     </section>
-                    <section
-                        className="h-full cursor-pointer "
-                    >
-                        <div className="flex flex-row justify-between items-center px-4 py-1">
+                    <section className="h-full" style={{direction: eng ? 'ltr' : 'rtl'}}>
+                        <div className="flex flex-row justify-between items-center px-4 py-2 mb-1.5 bg-[#212223]">
+                            <div className="text-gray-400">
+                                {eng ? 'Language' : 'שפה'}
+                            </div>
+                            <div className="flex">
+                                <div className="flex items-center px-3">
+                                    <input id="horizontal-list-eng" type="radio"
+                                           checked={eng}
+                                           name="list-radio"
+                                           onChange={event => changeSetting({english: event.target.checked})}
+                                           className="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-700 focus:ring-offset-gray-700 focus:ring-2 bg-gray-600 border-gray-500 cursor-pointer"/>
+                                    <label htmlFor="horizontal-list-eng"
+                                           className={`w-full py-3 ms-2 text-sm font-medium ${eng ? 'text-amber-400' : 'text-blue-700'}`}>English</label>
+                                </div>
+                                <div className="flex items-center px-3">
+                                    <input id="horizontal-list-heb" type="radio" checked={!eng} name="list-radio"
+                                           onChange={event => changeSetting({english: !event.target.checked})}
+                                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 cursor-pointer"/>
+                                    <label htmlFor="horizontal-list-heb"
+                                           className={`w-full py-3 ms-2 text-sm font-medium ${eng ? 'text-blue-700' : 'text-amber-400'}`}>עברית</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-row justify-between items-center px-4 py-2 mb-1.5 bg-[#212223]">
                             <div className="text-gray-400">{eng ? 'Location' : 'מיקום'}</div>
                             <div
                                 className="text-amber-400">{eng ? settings.location.Name : (settings.location.NameHebrew || settings.location.Name)}</div>
-                            <div className={`ms-3 text-sm font-medium text-blue-700`}
-                                 onClick={() => setShowLocationChooser(true)}>{eng ? 'Change' : 'עריכה'}
+                            <div className="ms-3 text-sm font-medium text-blue-700 cursor-pointer"
+                                 onClick={() => setShowLocationChooser(true)}>{eng ? 'Change' : 'שנה'}
                             </div>
                         </div>
-                        <div className="flex flex-col items-center gap-2 px-4 py-1">
-                            <ToggleSwitch
-                                text={eng ? 'Language' : 'שפה'}
-                                onText='English'
-                                offText='עברית'
-                                checked={settings.english}
-                                onChange={(checked: boolean) => changeSetting({english: checked})}
-                            />
-                            <ToggleSwitch
-                                text={eng ? 'Show Notifications' : 'הצג הודעות'}
-                                onText={eng ? 'Showing' : 'מציג'}
-                                offText={eng ? 'Not Showing' : 'לא מציג'}
-                                checked={settings.showNotifications}
-                                onChange={(checked: boolean) => changeSetting({showNotifications: checked})}
-                            />
-                            <ToggleSwitch
-                                text={eng ? 'Show Daf Yomi' : 'הצג דף היומי'}
-                                onText={eng ? 'Showing' : 'מציג'}
-                                offText={eng ? 'Not Showing' : 'לא מציג'}
-                                checked={settings.showDafYomi}
-                                onChange={(checked: boolean) => changeSetting({showDafYomi: checked})}
-                            />
-                            <ToggleSwitch
-                                text={eng ? '24 Hour [army] Clock' : 'שעון 24 שעות'}
-                                onText={eng ? 'Showing' : 'מציג'}
-                                offText={eng ? 'Not Showing' : 'לא מציג'}
-                                checked={settings.armyTime}
-                                onChange={(checked: boolean) => changeSetting({armyTime: checked})}
-                            />
+                        <div className="flex flex-col items-center px-4">
+                            <div className="px-4 py-2 mb-1.5 bg-[#212223] w-full">
+                                <ToggleSwitch
+                                    text={eng ? 'Show Notifications' : 'הצג הודעות'}
+                                    onText={eng ? 'Showing' : 'מציג'}
+                                    offText={eng ? 'Not Showing' : 'לא מציג'}
+                                    checked={settings.showNotifications}
+                                    onChange={(checked: boolean) => changeSetting({showNotifications: checked})}
+                                />
+                            </div>
+                            <div className="px-4 py-1 mb-1.5 bg-[#212223] w-full">
+                                <ToggleSwitch
+                                    text={eng ? 'Show Daf Yomi' : 'הצג דף היומי'}
+                                    onText={eng ? 'Showing' : 'מציג'}
+                                    offText={eng ? 'Not Showing' : 'לא מציג'}
+                                    checked={settings.showDafYomi}
+                                    onChange={(checked: boolean) => changeSetting({showDafYomi: checked})}
+                                />
+                            </div>
+                            <div className="px-4 py-1 mb-1.5 bg-[#212223] w-full">
+                                <ToggleSwitch
+                                    text={eng ? '24 Hour [army] Clock' : 'שעון 24 שעות'}
+                                    onText={eng ? 'Showing' : 'מציג'}
+                                    offText={eng ? 'Not Showing' : 'לא מציג'}
+                                    checked={settings.armyTime}
+                                    onChange={(checked: boolean) => changeSetting({armyTime: checked})}
+                                />
+                            </div>
                         </div>
-                        <div className="flex flex-col items-start px-4 py-1 text-gray-400">
+                        <div className="flex flex-col items-start text-gray-400 px-4 py-1 mb-1.5 bg-[#212223]">
                             <ToggleSwitch
                                 text={eng ? 'Show Shir-Shel-Yom of Gr"a' : 'הצג שיר של יום של הגר\"א'}
                                 onText={eng ? 'Showing' : 'מציג'}
@@ -103,7 +126,7 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
                                 onChange={(checked: boolean) => changeSetting({showGaonShir: checked})}
                             />
                         </div>
-                        <div className="flex flex-row justify-between items-center px-4 py-1">
+                        <div className="flex flex-row justify-between items-center px-4 py-1 mb-1.5 bg-[#212223]">
                             <div
                                 className="text-gray-400">{eng ? 'Minutes to show past Zmanim' : 'דקות להציג זמנים שעברו'}</div>
                             <input type="number" value={settings.minToShowPassedZman}
@@ -111,17 +134,17 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
                                    onChange={e => changeSetting({minToShowPassedZman: parseInt(e.target.value)})}
                             />
                         </div>
-                        <div className="flex flex-row justify-between items-center px-4 py-1">
+                        <div className="flex flex-row justify-between items-center px-4 py-1 mb-1.5 bg-[#212223]">
                             <div className="text-gray-400">{eng ? 'Number of Zmanim to Show' : 'מספר זמנים להציג'}</div>
                             <input type="number" value={settings.numberOfItemsToShow}
                                    className="text-amber-400  w-1/5 rounded text-center"
                                    onChange={e => changeSetting({numberOfItemsToShow: parseInt(e.target.value)})}
                             />
                         </div>
-
-                        <header className="p-4 font-bold text-lg">{eng ? 'Zmanim to Show' : 'זמנים להציג'}</header>
+                        <header
+                            className={`mt-4 p-4 font-bold text-lg flex-1 text-[#955] ${eng ? 'text-left' : 'text-right'}`}>{eng ? 'Zmanim to Show' : 'זמנים להציג'}</header>
                         {ZmanTypes.map(zt =>
-                            <div className="flex flex-col items-start px-4 py-1 text-gray-400" key={zt.id}>
+                            <div className="px-4 py-1 mb-1.5 text-gray-400 bg-[#212223]" key={zt.id}>
                                 <ToggleSwitch
                                     text={eng ? zt.eng : zt.heb}
                                     onText={eng ? 'Showing' : 'מציג'}
