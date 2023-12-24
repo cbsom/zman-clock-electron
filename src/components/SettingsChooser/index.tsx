@@ -8,13 +8,18 @@ import CloseButton from "@/components/CloseButton";
 
 interface SettingsChooserProps {
     onChangeSettings: () => any,
-    onClose:Function
+    onClose: Function
 }
 
 export default function SettingsChooser({onChangeSettings, onClose}: SettingsChooserProps) {
     const {settings, setSettings} = useSettingsData();
     const [showLocationChooser, setShowLocationChooser] = useState(false);
     const eng = settings.english;
+
+    function changeSetting(settingToChange: object) {
+        setSettings({...settings, ...settingToChange} as Settings);
+        onChangeSettings();
+    }
 
     function changeZmanToShowList(zt: ZmanToShow, checked: boolean) {
         let list: ZmanToShow[] = [...settings.zmanimToShow];
@@ -24,15 +29,13 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
         } else if (!checked && listHasThis) {
             list = list.filter(zts => zts.id !== zt.id);
         }
-        setSettings({...settings, zmanimToShow: list} as Settings);
-        onChangeSettings();
+        changeSetting({zmanimToShow: list});
     }
 
     function changeLocation(location: Location) {
         if (!!location) {
-            setSettings({...settings, location: location} as Settings);
+            changeSetting({location: location});
             setShowLocationChooser(false);
-            onChangeSettings();
         }
     }
 
@@ -67,40 +70,28 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
                                 onText='English'
                                 offText='עברית'
                                 checked={settings.english}
-                                onChange={(checked: boolean) => setSettings({
-                                    ...settings,
-                                    english: checked
-                                } as Settings)}
+                                onChange={(checked: boolean) => changeSetting({english: checked})}
                             />
                             <ToggleSwitch
                                 text={eng ? 'Show Notifications' : 'הצג הודעות'}
                                 onText={eng ? 'Showing' : 'מציג'}
                                 offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.showNotifications}
-                                onChange={(checked: boolean) => setSettings({
-                                    ...settings,
-                                    showNotifications: checked
-                                } as Settings)}
+                                onChange={(checked: boolean) => changeSetting({showNotifications: checked})}
                             />
                             <ToggleSwitch
                                 text={eng ? 'Show Daf Yomi' : 'הצג דף היומי'}
                                 onText={eng ? 'Showing' : 'מציג'}
                                 offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.showDafYomi}
-                                onChange={(checked: boolean) => setSettings({
-                                    ...settings,
-                                    showDafYomi: checked
-                                } as Settings)}
+                                onChange={(checked: boolean) => changeSetting({showDafYomi: checked})}
                             />
                             <ToggleSwitch
                                 text={eng ? '24 Hour [army] Clock' : 'שעון 24 שעות'}
                                 onText={eng ? 'Showing' : 'מציג'}
                                 offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.armyTime}
-                                onChange={(checked: boolean) => setSettings({
-                                    ...settings,
-                                    armyTime: checked
-                                } as Settings)}
+                                onChange={(checked: boolean) => changeSetting({armyTime: checked})}
                             />
                         </div>
                         <div className="flex flex-col items-start px-4 py-1 text-gray-400">
@@ -109,10 +100,7 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
                                 onText={eng ? 'Showing' : 'מציג'}
                                 offText={eng ? 'Not Showing' : 'לא מציג'}
                                 checked={settings.showGaonShir}
-                                onChange={(checked: boolean) => setSettings({
-                                    ...settings,
-                                    showGaonShir: checked
-                                } as Settings)}
+                                onChange={(checked: boolean) => changeSetting({showGaonShir: checked})}
                             />
                         </div>
                         <div className="flex flex-row justify-between items-center px-4 py-1">
@@ -120,20 +108,14 @@ export default function SettingsChooser({onChangeSettings, onClose}: SettingsCho
                                 className="text-gray-400">{eng ? 'Minutes to show past Zmanim' : 'דקות להציג זמנים שעברו'}</div>
                             <input type="number" value={settings.minToShowPassedZman}
                                    className="text-amber-400 w-1/5 rounded text-center"
-                                   onChange={e => setSettings({
-                                       ...settings,
-                                       minToShowPassedZman: parseInt(e.target.value)
-                                   }  as Settings)}
+                                   onChange={e => changeSetting({minToShowPassedZman: parseInt(e.target.value)})}
                             />
                         </div>
                         <div className="flex flex-row justify-between items-center px-4 py-1">
                             <div className="text-gray-400">{eng ? 'Number of Zmanim to Show' : 'מספר זמנים להציג'}</div>
                             <input type="number" value={settings.numberOfItemsToShow}
                                    className="text-amber-400  w-1/5 rounded text-center"
-                                   onChange={e => setSettings({
-                                       ...settings,
-                                       numberOfItemsToShow: parseInt(e.target.value)
-                                   }  as Settings)}
+                                   onChange={e => changeSetting({numberOfItemsToShow: parseInt(e.target.value)})}
                             />
                         </div>
 

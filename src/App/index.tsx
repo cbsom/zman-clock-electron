@@ -1,5 +1,4 @@
 import {useState, useEffect} from "react";
-import {Helmet} from "react-helmet";
 import {jDate, Utils, getNotifications, ZmanimUtils, Zmanim} from "../jcal-zmanim";
 import {useSettingsData} from "@/settingsContext";
 import Settings from "../settings";
@@ -53,7 +52,7 @@ function App() {
         const sd = new Date(),
             nowTime = Utils.timeFromDate(sd);
 
-        if (!needsZmanRefresh(sd, nowTime)) {
+        if (!needsFullRefresh && !needsZmanRefresh(sd, nowTime)) {
             if (Utils.isSameSdate(jdate.getDate(), sd) && Utils.isTimeAfter(sunTimes.sunset, nowTime)) {
                 setJdate(jdate.addDays(1));
             }
@@ -128,7 +127,7 @@ function App() {
     };
     const fillNotifications = () => {
         if (settings.showNotifications) {
-            if (needsNotificationsRefresh || isPastShulZman()) {
+            if (needsFullRefresh || needsNotificationsRefresh || isPastShulZman()) {
                 const notifications = getNotifications(
                     jdate,
                     currentTime,
@@ -161,10 +160,7 @@ function App() {
     };
 
     return (
-        <div className="app">
-            <Helmet>
-                <link rel="stylesheet" href={`/${settings.english ? 'eng' : 'heb'}.css`}/>
-            </Helmet>
+        <div className="app" style={{direction: settings.english ? 'ltr' : 'rtl'}}>
             <div className="fixed top-7 right-3 z-10">
                 <a
                     href="#"

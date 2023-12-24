@@ -21,7 +21,8 @@ export default function LocationChooser({location, eng, onChangeLocation, onClos
                 </article>
             </section>
             <section className="h-full">
-                <input type="text" className='p-3 rounded' placeholder={eng ? 'Filter' : 'חפש'} onChange={e =>
+                <input type="text" className='p-3 rounded' placeholder={eng ? 'Filter' : 'חפש'}
+                       style={{direction: eng ? 'ltr' : 'rtl'}} onChange={e =>
                     setList(Locations.filter(l =>
                         (`${l.Name} ${(!!l.NameHebrew) ? '  ' + l.NameHebrew : ''}`).toLowerCase().includes(e.target.value.toLowerCase())))}/>
                 {list.map(loc =>
