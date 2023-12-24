@@ -61,7 +61,7 @@ async function createWindow() {
             contextIsolation: true,
         },
     });
-    //win.setMenuBarVisibility(false);
+    win.setMenuBarVisibility(false);
 
     if (url) {
         // electron-vite-vue#298
