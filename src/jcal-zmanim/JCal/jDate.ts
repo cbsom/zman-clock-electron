@@ -352,11 +352,15 @@ export default class jDate {
     );
   }
 
-  /**Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו.*/
-  toStringHeb(): string {
+
+/**
+ * Returns the current Jewish date in the format: יום חמישי כ"א כסלו תשע"ו
+ * @param showDayOfWeek 
+ * @returns 
+ */
+  toStringHeb(hideDayOfWeek = false): string {
     return (
-      DaysOfWeekHeb[this.getDayOfWeek()] +
-      " " +
+      (!hideDayOfWeek ? DaysOfWeekHeb[this.getDayOfWeek()] + " ":"") +
       Utils.toJewishNumber(this.Day) +
       " " +
       JewishMonthsHeb[this.Month] +
