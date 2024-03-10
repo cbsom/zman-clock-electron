@@ -186,6 +186,7 @@ function App() {
       <div className="fixed top-7 right-3 z-10">
         <a
           href="#"
+          title={settings.english ? "Open settings" : "הגדרות"}
           data-te-ripple-init={true}
           data-te-ripple-color="light"
           className="cursor-pointer p-5"
