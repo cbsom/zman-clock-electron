@@ -30,7 +30,7 @@ function App() {
   const [needsFullRefresh, setNeedsFullRefresh] = useState(true);
   const [needsNotificationsRefresh, setNeedsNotificationsRefresh] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isDayTime, setIsDayTime] = useState(false);
+  const [isNightTime, setIsNightTime] = useState(false);
   const [isBeinHashmashos, setIsBeinHashmashos] = useState(false);
 
   //Run once
@@ -83,13 +83,12 @@ function App() {
     setNeedsFullRefresh(false);
 
     const { alos, shkia } = shulZmanim,
-      isAfterAlos = !!alos && Utils.isTimeAfter(alos, nowTime),
-      isAfterShkia = !!shkia && Utils.isTimeAfter(shkia, nowTime),
-      isDay = !!alos && !!shkia && isAfterAlos && !isAfterShkia,
-      beinHashmashos =
-        !!alos && !!shkia && !isDay && !Utils.isTimeAfter(Utils.addMinutes(shkia, 20), nowTime);
+      isBeforeAlos = Utils.isTimeAfter(nowTime, alos),
+      isAfterShkia = Utils.isTimeAfter(shkia, nowTime),
+      isNight = isBeforeAlos && isAfterShkia,
+      beinHashmashos = isNight && Utils.isTimeAfter(nowTime, Utils.addMinutes(shkia, 20));
 
-    setIsDayTime(isDay);
+    setIsNightTime(isNight);
     setIsBeinHashmashos(beinHashmashos);
   };
   const isPastShulZman = () => {
@@ -172,11 +171,11 @@ function App() {
     );
   };
   const getDateText = () => {
-    if (jdate.DayOfWeek === DaysOfWeek.SUNDAY && !isDayTime) {
+    if (jdate.DayOfWeek === DaysOfWeek.SUNDAY && isNightTime) {
       //Motzai Shabbos gets a special day of the week name
       return settings.english
-        ? `${isBeinHashmashos ? "Bein Hashmashos" : `Motza'ei`} Shabbos ${jdate.toStringHeb(true)}`
-        : `${isBeinHashmashos ? "בין השמשות" : `מוצאי`} שבת ${jdate.toString(true)}`;
+        ? `${isBeinHashmashos ? "Bein Hashmashos" : "Motza'ei Shabbos"} ${jdate.toStringHeb(true)}`
+        : `${isBeinHashmashos ? "בין השמשות" : "מוצאי שבת"} ${jdate.toString(true)}`;
     } else {
       return settings.english ? jdate.toString() : jdate.toStringHeb();
     }
