@@ -1,6 +1,7 @@
-import React, {createContext, useContext, useEffect, useState, PropsWithChildren} from "react"
+import React, { createContext, useContext, useEffect, useState, PropsWithChildren } from "react"
 import Settings from "./settings";
-import {__DEV__} from "@/jcal-zmanim/Utils";
+import { __DEV__ } from "@/jcal-zmanim/Utils";
+import { closestDistanceMatch } from "./jcal-zmanim";
 
 interface SettingsContextType {
     settings: Settings,
@@ -37,6 +38,19 @@ export const SettingsProvider = (props: PropsWithChildren) => {
                 const sObj = JSON.parse(s);
                 setStateSettings(sObj);
                 __DEV__ && console.log('get local storage settings', sObj)
+            }
+            //First time load
+            else {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const { latitude, longitude } = position.coords;
+                        const location = closestDistanceMatch({ latitude, longitude });
+                        if (location) {
+                            const s = { ...settings, location } as Settings;
+                            setSettings(s);
+                        }
+                    });
+                }
             }
         }
     }, [])
